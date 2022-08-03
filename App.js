@@ -1,20 +1,61 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import BottomHomeNav from "./App/screens/Home/BottomHomeNav";
+import AddIncomeExpenseNav from "./App/screens/AddIncomeExpenseNav";
+import AddIncome from "./App/screens/AddIncomeExpense/AddIncome";
+import Login from "./App/screens/LoginRegister/Login";
+import Register from "./App/screens/LoginRegister/Register";
+import SuccessIndicator from "./App/components/SuccessIndicator";
+import {
+  useFonts,
+  Montserrat_400Regular as MontserratRegular,
+  Montserrat_500Medium as MontserratMedium,
+  Montserrat_600SemiBold as MontserratSemibold,
+} from "@expo-google-fonts/montserrat";
+import {
+  Nunito_400Regular as NunitoRegular,
+  Nunito_500Medium as NunitoMedium,
+} from "@expo-google-fonts/nunito";
+import IncomeExpenses from "./App/screens/IncomeExpenses";
+import UnderMentainance from "./App/components/UnderMentainance";
+
+const Stack = createNativeStackNavigator();
+const StackNavigator = () => (
+  <Stack.Navigator
+    screenOptions={{ headerShown: false }}
+    initialRouteName="HomeNav"
+  >
+    <Stack.Screen name="IncomeExpenses" component={IncomeExpenses} />
+    <Stack.Screen name="SuccessIn" component={SuccessIndicator} />
+    <Stack.Screen
+      name="AstronotUnderMentainance"
+      component={UnderMentainance}
+    />
+    <Stack.Screen name="Register" component={Register} />
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="HomeNav" component={BottomHomeNav} />
+    <Stack.Screen name="AddIncomeExpense" component={AddIncomeExpenseNav} />
+    <Stack.Screen name="AddIncome" component={AddIncome} />
+  </Stack.Navigator>
+);
 
 export default function App() {
+  let [fontsLoaded] = useFonts({
+    MontserratRegular,
+    MontserratMedium,
+    MontserratSemibold,
+    NunitoRegular,
+    NunitoMedium,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
