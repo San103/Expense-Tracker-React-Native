@@ -20,12 +20,29 @@ import {
 } from "@expo-google-fonts/nunito";
 import IncomeExpenses from "./App/screens/IncomeExpenses";
 import UnderMentainance from "./App/components/UnderMentainance";
+import { DatabaseConnection } from "./App/components/Database/dbConnection";
 
 const Stack = createNativeStackNavigator();
+
+const db = DatabaseConnection.getConnection();
+
+// Navigate to Home Directly when user = true
+const check = () => {
+  db.transaction((tx) => {
+    tx.executeSql("SELECT * FROM table_user", [], (tx, results) => {
+      if (results.rows.length > 0) {
+        return "HomeNav";
+      } else {
+        return "Login";
+      }
+    });
+  });
+};
+
 const StackNavigator = () => (
   <Stack.Navigator
     screenOptions={{ headerShown: false }}
-    initialRouteName="HomeNav"
+    initialRouteName="Login"
   >
     <Stack.Screen name="IncomeExpenses" component={IncomeExpenses} />
     <Stack.Screen name="SuccessIn" component={SuccessIndicator} />

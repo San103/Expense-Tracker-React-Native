@@ -28,11 +28,32 @@ const listTransac = () => [
 ];
 
 const db = DatabaseConnection.getConnection();
+
 function IncomeExpenses({ propUsername }) {
   const [balance, setBalance] = useState();
+
   const [flatListItems, setFlatListItems] = useState([]);
+
   useEffect(() => {
     transactions();
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT SUM(amountBalance) as totalBal  FROM table_income",
+        [],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            const tot = results.rows.item(0).totalBal;
+            const defaultValue = 0;
+
+            if (tot === null) {
+              setBalance(defaultValue.toFixed(2));
+            } else {
+              setBalance(tot.toFixed(2));
+            }
+          }
+        }
+      );
+    });
   }, []);
 
   //get Transactions
@@ -58,24 +79,6 @@ function IncomeExpenses({ propUsername }) {
       });
     });
   //get Sum of the Balance from the username
-
-  db.transaction((tx) => {
-    tx.executeSql(
-      "SELECT SUM(amountBalance) as totalBal  FROM table_income",
-      [],
-      (tx, results) => {
-        if (results.rows.length > 0) {
-          const tot = results.rows.item(0).totalBal;
-          const defaultValue = 0;
-          if (tot === null) {
-            setBalance(defaultValue.toFixed(2));
-          } else {
-            setBalance(tot.toFixed(2));
-          }
-        }
-      }
-    );
-  });
 
   //getDimension
   const { height, width } = useWindowDimensions();

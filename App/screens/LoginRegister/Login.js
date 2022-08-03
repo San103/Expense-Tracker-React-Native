@@ -59,14 +59,6 @@ function Login(props) {
         }
       );
     });
-
-    //Navigate to Home Directly when user = true
-    // db.transaction((tx) => {
-    //   tx.executeSql("SELECT * FROM table_user", [], (tx, results) => {
-    //     var temp = [];
-    //     if (results.rows.length > 0) props.navigation.navigate("HomeNav");
-    //   });
-    // });
   }, []);
 
   //Validate User's Input

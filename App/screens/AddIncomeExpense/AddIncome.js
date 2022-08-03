@@ -48,7 +48,7 @@ function AddIncome(props) {
         ["52", bal, date, category, note, repeat, endDate],
         (tx, results) => {
           if (results.rowsAffected > 0) {
-            navigation.navigate("SuccessIn");
+            navigation.push("HomeNav");
           } else console.log("Error 404, not found");
         }
       );
