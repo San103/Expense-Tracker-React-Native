@@ -28,6 +28,7 @@ function MyExpenses(props) {
 
         (tx, results) => {
           const temp = [];
+          var temp2 = [];
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i).category);
             setCategory(temp);
@@ -36,7 +37,12 @@ function MyExpenses(props) {
               [temp[i], sanDate, sanDate],
               (tx2, results2) => {
                 for (let j = 0; j < results2.rows.length; ++j) {
-                  console.log(results2.rows.item(j).tot);
+                  for (let a = 0; a < results2.rows.length; ++a) {
+                    temp2[j][a] = temp[j];
+                    if (temp2[j][a] != temp[j]) {
+                      console.log(results2.rows.item(j).tot);
+                    }
+                  }
                 }
               }
             );
