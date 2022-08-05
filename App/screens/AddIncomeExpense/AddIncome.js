@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Switch, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Switch,
+  Animated,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { DarkTheme } from "@react-navigation/native";
@@ -8,10 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import DateTimePickerAndroid from "@react-native-community/datetimepicker";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 import AppReapetEnabled from "../../components/AppReapetEnabled";
 import AppEndDate from "../../components/DatePicker/AppEndDate";
-import AppDatePicker from "../../components/DatePicker/AppDatePicker";
 import AppText from "../../components/AppText";
 import AppTextInput from "../../components/AppTextInput";
 import CategoryPickerItem from "../../components/IncomeExpenseComp/CategoryPickerItem";
@@ -20,7 +28,6 @@ import Incomecategories from "./DataCategories/IncomeCat";
 import ErrorMessages from "../../components/ErrorMessages";
 import AppFormPicker from "../../components/IncomeExpenseComp/AppFormPicker";
 import { DatabaseConnection } from "../../components/Database/dbConnection";
-import DateFormik from "../../components/DatePicker/DateFormik";
 
 const validationSchema = () =>
   Yup.object().shape({
@@ -31,7 +38,7 @@ const validationSchema = () =>
 const db = DatabaseConnection.getConnection();
 
 //Function Component
-function AddIncome(props) {
+function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
   //Variable Switch
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -40,15 +47,46 @@ function AddIncome(props) {
   const navigation = useNavigation();
   const [getid, setId] = useState();
 
+  //Current Date to Display Default
+  const dateNow = new Date().getDate();
+  const month = new Date().getMonth();
+  const year = new Date().getFullYear();
+  const sanDate = dateNow + "/" + (month + 1) + "/" + year;
+
+  //useState For Setting Date
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState("" + sanDate);
+
+  //Function Date
+  const onChange = (event, selectedData) => {
+    const currentDate = selectedData || date;
+    setShow();
+    setDate(currentDate);
+    let tempDate = new Date(currentDate);
+    let fDate =
+      tempDate.getDate() +
+      "/" +
+      (tempDate.getMonth() + 1) +
+      "/" +
+      tempDate.getFullYear();
+    setText(fDate);
+  };
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
   //Insert into Database
   const insertData = (uid, bal, date, category, note, repeat, endDate) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO table_income (user_id,amountBalance,date,category,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?)",
-        ["52", bal, date, category, note, repeat, endDate],
+        "INSERT INTO table_income (user_id,type,amountBalance,date,category,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?,?)",
+        ["52", "income", bal, date, category, note, repeat, endDate],
         (tx, results) => {
           if (results.rowsAffected > 0) {
-            navigation.push("HomeNav");
+            navigation.navigate("SuccessIn");
           } else console.log("Error 404, not found");
         }
       );
@@ -72,7 +110,7 @@ function AddIncome(props) {
             insertData(
               getid,
               AmountSalary,
-              "12",
+              text,
               category.label,
               note,
               "2",
@@ -129,18 +167,46 @@ function AddIncome(props) {
                 icon="list-alt"
               />
 
-              <AppDatePicker
-              // value={values.date}
-              // name={"date"}
-              // onChange={(date2) => {
-              //   setFieldValue("date", date2), console.log(date2);
-              // }}
-              />
+              <TouchableWithoutFeedback onPress={() => showMode("date")}>
+                <View style={[styles.containerDate]}>
+                  <LinearGradient
+                    style={styles.LinearStyle}
+                    colors={["#FF70AF", "#5782F5", "#5F48F5"]}
+                    start={{ x: 0.1, y: 0.1 }}
+                    end={{ x: 1, y: 3 }}
+                  >
+                    {icon && (
+                      <FontAwesome5Icon
+                        name={icon}
+                        size={15}
+                        color={iconColor}
+                        style={styles.iconDesign}
+                      />
+                    )}
+                  </LinearGradient>
+                  <AppText style={[styles.textLabel]}>{text}</AppText>
+                  <FontAwesome5Icon
+                    name={"chevron-down"}
+                    size={20}
+                    color="#9E9E9E"
+                    style={{ alignSelf: "center", paddingRight: 10 }}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+              {show && (
+                <DateTimePickerAndroid
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={mode}
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
 
               <AppTextInput
                 placeholder="Note"
                 icon="book-open"
-                maxLength={155}
+                maxLength={15}
                 multiline
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -222,6 +288,36 @@ const styles = StyleSheet.create({
   },
   animatedStyle: {
     flexDirection: "row",
+  },
+  containerDate: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    flexDirection: "row",
+    padding: 15,
+    marginVertical: 10,
+    shadowColor: "#b3aba2",
+    elevation: 5,
+  },
+  LinearStyle: {
+    height: 35,
+    width: 35,
+    flexDirection: "row",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  textLabel: {
+    flex: 1,
+    color: "#9E9E9E",
+    width: "100%",
+    textAlignVertical: "center",
+    height: 35,
+    fontSize: 18,
+  },
+  iconDesign: {
+    marginHorizontal: 10,
+    alignSelf: "center",
   },
 });
 

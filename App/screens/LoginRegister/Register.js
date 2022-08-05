@@ -4,6 +4,7 @@ import { Button } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { DatabaseConnection } from "../../components/Database/dbConnection";
+import { useNavigation } from "@react-navigation/native";
 
 import AppText from "../../components/AppText";
 import AppTextInput from "../../components/AppTextInput";
@@ -28,7 +29,7 @@ const db = DatabaseConnection.getConnection();
 function Register(props) {
   //function Component
   const [UserName, setUsername] = useState("");
-
+  const navigation = useNavigation();
   const storeData = async (passname) => {
     try {
       await AsyncStorage.setItem("username", passname);
@@ -52,7 +53,7 @@ function Register(props) {
               (tx, results) => {
                 console.log("Results", results.rowsAffected);
                 if (results.rowsAffected > 0) {
-                  props.navigation.navigate("SuccessIn");
+                  navigation.navigate("HomeNav");
                   setUsername(username);
                   storeData(username);
                 } else console.log("Error 404, not found");

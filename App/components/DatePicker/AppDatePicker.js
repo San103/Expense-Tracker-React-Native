@@ -13,7 +13,6 @@ function AppDatePicker(
     bg3 = "#5F48F5",
     iconColor = "#fff",
     style,
-    ...otherProps
   },
   props
 ) {
@@ -50,9 +49,9 @@ function AppDatePicker(
   return (
     <>
       <TouchableWithoutFeedback onPress={() => showMode("date")}>
-        <View style={[styles.container, style]}>
+        <View style={[styles.containerDate, style]}>
           <LinearGradient
-            style={styles.LGStyle}
+            style={styles.LinearStyle}
             colors={[bg1, bg2, bg3]}
             start={{ x: 0.1, y: 0.1 }}
             end={{ x: 1, y: 3 }}
@@ -62,11 +61,11 @@ function AppDatePicker(
                 name={icon}
                 size={15}
                 color={iconColor}
-                style={styles.icon}
+                style={styles.iconDesign}
               />
             )}
           </LinearGradient>
-          <AppText style={[styles.textCategory]}>{text}</AppText>
+          <AppText style={[styles.textLabel]}>{text}</AppText>
           <FontAwesome5Icon
             name={"chevron-down"}
             size={20}
@@ -82,7 +81,6 @@ function AppDatePicker(
           mode={mode}
           display="default"
           onChange={onChange}
-          {...otherProps}
         />
       )}
     </>
@@ -90,7 +88,7 @@ function AppDatePicker(
 }
 
 const styles = StyleSheet.create({
-  container: {
+  containerDate: {
     backgroundColor: "white",
     borderRadius: 20,
     flexDirection: "row",
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     shadowColor: "#b3aba2",
     elevation: 5,
   },
-  LGStyle: {
+  LinearStyle: {
     height: 35,
     width: 35,
     flexDirection: "row",
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
   },
-  textCategory: {
+  textLabel: {
     flex: 1,
     color: "#9E9E9E",
     width: "100%",
@@ -116,7 +114,7 @@ const styles = StyleSheet.create({
     height: 35,
     fontSize: 18,
   },
-  icon: {
+  iconDesign: {
     marginHorizontal: 10,
     alignSelf: "center",
   },

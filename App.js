@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -25,24 +25,19 @@ import { DatabaseConnection } from "./App/components/Database/dbConnection";
 const Stack = createNativeStackNavigator();
 
 const db = DatabaseConnection.getConnection();
-
-// Navigate to Home Directly when user = true
 const check = () => {
   db.transaction((tx) => {
-    tx.executeSql("SELECT * FROM table_user", [], (tx, results) => {
-      if (results.rows.length > 0) {
-        return "HomeNav";
-      } else {
-        return "Login";
-      }
+    tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
+      return results.rows.length > 0;
     });
   });
 };
+// Navigate to Home Directly when user = true
 
 const StackNavigator = () => (
   <Stack.Navigator
     screenOptions={{ headerShown: false }}
-    initialRouteName="Login"
+    initialRouteName={"Login"}
   >
     <Stack.Screen name="IncomeExpenses" component={IncomeExpenses} />
     <Stack.Screen name="SuccessIn" component={SuccessIndicator} />
@@ -70,6 +65,7 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <NavigationContainer>
       <StackNavigator />

@@ -45,6 +45,9 @@ const Accounts = () => {
         <Text style={styles.textheader}>Foreign Id</Text>
         <Text style={styles.textbottom}>{item.user_id}</Text>
 
+        <Text style={styles.textheader}>Type</Text>
+        <Text style={styles.textbottom}>{item.type}</Text>
+
         <Text style={styles.textheader}>Balance</Text>
         <Text style={styles.textbottom}>{item.amountBalance}</Text>
 

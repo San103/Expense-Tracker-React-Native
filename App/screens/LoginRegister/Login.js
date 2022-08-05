@@ -16,6 +16,7 @@ import Screen from "../../components/Screen";
 import { DatabaseConnection } from "../../components/Database/dbConnection";
 import ErrorMessages from "../../components/ErrorMessages";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BottomHomeNav from "../Home/BottomHomeNav";
 
 const validationSchema = () =>
   Yup.object().shape({
@@ -52,13 +53,14 @@ function Login(props) {
           if (res.rows.length == 0) {
             txn.executeSql("DROP TABLE IF EXISTS table_income", []);
             txn.executeSql(
-              "CREATE TABLE IF NOT EXISTS table_income(income_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER(255) ,amountBalance INTEGER(1000000), date VARCHAR(255), category VARCHAR(255), note VARCHAR(255), repeat INTEGER(255), endDate VARCHAR(255))",
+              "CREATE TABLE IF NOT EXISTS table_income(income_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER(255) ,type VARCHAR(255),amountBalance INTEGER(1000000), date VARCHAR(255), category VARCHAR(255), note VARCHAR(255), repeat INTEGER(255), endDate VARCHAR(255))",
               []
             );
           }
         }
       );
     });
+    check();
   }, []);
 
   //Validate User's Input
@@ -78,6 +80,16 @@ function Login(props) {
           }
         }
       );
+    });
+  };
+  const check = () => {
+    db.transaction((tx) => {
+      tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
+        if (results.rows.length > 0) {
+          props.navigation.navigate("HomeNav");
+          //const tot = results.rows.item(0).totalBal;
+        }
+      });
     });
   };
 
@@ -152,17 +164,6 @@ function Login(props) {
       <TouchableOpacity onPress={() => props.navigation.navigate("Register")}>
         <AppText style={{ alignSelf: "center", fontFamily: "NunitoRegular" }}>
           Haven't registered yet? Register Now
-        </AppText>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => props.navigation.navigate("HomeNav")}>
-        <AppText
-          style={{
-            marginTop: 30,
-            alignSelf: "center",
-            fontFamily: "NunitoRegular",
-          }}
-        >
-          Go to Home
         </AppText>
       </TouchableOpacity>
     </Screen>

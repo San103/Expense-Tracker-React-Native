@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import NumberFormat from "react-number-format";
 
-function FormatNumber({ value2 }) {
+function FormatNumber({ value2, size = 35 }) {
   return (
     <View>
       <NumberFormat
@@ -10,12 +10,11 @@ function FormatNumber({ value2 }) {
         decimalScale={2}
         displayType="text"
         thousandSeparator
-        prefix="$"
+        prefix="₱"
         renderText={(value) => (
           <Text
             style={{
-              paddingVertical: 10,
-              fontSize: 35,
+              fontSize: size,
               fontFamily: "NunitoMedium",
               color: "white",
             }}

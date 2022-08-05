@@ -10,7 +10,7 @@ function SuccessIndicator(props) {
   useEffect(() => {
     Animated.timing(animationProgress.current, {
       toValue: 1,
-      duration: 5000,
+      duration: 4000,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start(({ finished }) => {
@@ -31,6 +31,7 @@ function SuccessIndicator(props) {
 }
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
     justifyContent: "center",
   },

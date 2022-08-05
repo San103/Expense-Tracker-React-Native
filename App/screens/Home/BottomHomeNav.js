@@ -19,6 +19,7 @@ import ViewAllUser from "../ViewAllUsers";
 import RetrieveData from "../RetrieveData";
 import { useRoute } from "@react-navigation/native";
 import AccountsTransac from "../Accounts";
+import MyExpenses from "../MyExpenses";
 
 const Tab = createBottomTabNavigator();
 
@@ -70,8 +71,8 @@ function BottomHomeNav(props) {
         }
         <Tab.Screen
           name={"Home"}
-          // component={HomeIncomExpense}
-          children={() => <IncomeExpenses propUsername={username} />}
+          component={HomeIncomExpense}
+          // children={() => <IncomeExpenses propUsername={username} />}
           options={{
             tabBarIcon: ({ focused }) => (
               <View style={styles.centeringIcon}>
@@ -234,7 +235,7 @@ function EmptyScreen() {
   return <Text style>Categories!</Text>;
 }
 function Transactions() {
-  return <ViewAllUser />;
+  return <MyExpenses />;
 }
 function Categories() {
   return <RetrieveData />;

@@ -42,7 +42,7 @@ function AddIncomeExpenseNav(props) {
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => {
-                props.navigation.goBack();
+                props.navigation.push("HomeNav");
               }}
             >
               <Icon
