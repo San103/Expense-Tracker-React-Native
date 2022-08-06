@@ -20,6 +20,9 @@ import RetrieveData from "../RetrieveData";
 import { useRoute } from "@react-navigation/native";
 import AccountsTransac from "../Accounts";
 import MyExpenses from "../MyExpenses";
+import Predictions from "../Predictions";
+import HistoryTransaction from "../HistoryTransaction";
+import Accounts2 from "../Accounts";
 
 const Tab = createBottomTabNavigator();
 
@@ -238,10 +241,10 @@ function Transactions() {
   return <MyExpenses />;
 }
 function Categories() {
-  return <RetrieveData />;
+  return <Accounts2 />;
 }
 function Accounts() {
-  return <AccountsTransac />;
+  return <HistoryTransaction />;
 }
 
 const styles = StyleSheet.create({

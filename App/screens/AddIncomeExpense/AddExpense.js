@@ -28,6 +28,7 @@ import ExpenseCategories from "./DataCategories/ExpenseCat";
 import ErrorMessages from "../../components/ErrorMessages";
 import AppFormPicker from "../../components/IncomeExpenseComp/AppFormPicker";
 import { DatabaseConnection } from "../../components/Database/dbConnection";
+import moment from "moment";
 
 const validationSchema = () =>
   Yup.object().shape({
@@ -51,26 +52,63 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const dateNow = new Date().getDate();
   const month = new Date().getMonth();
   const year = new Date().getFullYear();
-  const sanDate = dateNow + "/" + (month + 1) + "/" + year;
+  const dateToday = new Date();
+  const sanDate = moment(dateToday.setMonth(dateToday.getMonth())).format(
+    "YYYYMD"
+  );
 
   //useState For Setting Date
   const [date, setDate] = useState(new Date());
+  const [date2, setDate2] = useState();
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [text, setText] = useState("" + sanDate);
 
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const d = new Date();
+  const r = date2;
+  let monthName;
+
+  //get date when clicke
+  let monthName2 = months[r - 1];
+
+  if (monthName2 === undefined) {
+    monthName = months[d.getMonth()];
+  } else {
+    monthName = months[r - 1];
+  }
+  // console.log(monthName);
+  // console.log(monthName2);
   //Function Date
   const onChange = (event, selectedData) => {
     const currentDate = selectedData || date;
     setShow();
     setDate(currentDate);
+
     let tempDate = new Date(currentDate);
+
+    setDate2(tempDate.getMonth() + 1);
+
     let fDate =
-      tempDate.getDate() +
-      "/" +
+      tempDate.getFullYear() +
+      "" +
       (tempDate.getMonth() + 1) +
-      "/" +
-      tempDate.getFullYear();
+      "" +
+      tempDate.getDate();
+
     setText(fDate);
   };
   const showMode = (currentMode) => {
@@ -79,11 +117,32 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   };
 
   //Insert into Database
-  const insertData = (uid, bal, date, category, note, repeat, endDate) => {
+  const insertData = (
+    uid,
+    bal,
+    date,
+    dMonth,
+    category,
+    color,
+    note,
+    repeat,
+    endDate
+  ) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO table_income (user_id,type,amountBalance,date,category,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?,?)",
-        ["52", "expense", bal, date, category, note, repeat, endDate],
+        "INSERT INTO table_income (user_id,type,amountBalance,date,dateMonth,category,color,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?,?,?,?)",
+        [
+          "52",
+          "expense",
+          bal,
+          date,
+          dMonth,
+          category,
+          color,
+          note,
+          repeat,
+          endDate,
+        ],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             navigation.navigate("SuccessIn");
@@ -111,7 +170,9 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
               getid,
               AmountExpense,
               text,
+              monthName,
               category.label,
+              category.backgroundColor,
               note,
               "2",
               "01"

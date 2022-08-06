@@ -53,9 +53,13 @@ const Accounts = () => {
 
         <Text style={styles.textheader}>Starting Date</Text>
         <Text style={styles.textbottom}>{item.date}</Text>
+        <Text style={styles.textheader}>Month</Text>
+        <Text style={styles.textbottom}>{item.dateMonth}</Text>
 
         <Text style={styles.textheader}>Category</Text>
         <Text style={styles.textbottom}>{item.category}</Text>
+        <Text style={styles.textheader}>Color</Text>
+        <Text style={styles.textbottom}>{item.color}</Text>
 
         <Text style={styles.textheader}>Note</Text>
         <Text style={styles.textbottom}>{item.note}</Text>

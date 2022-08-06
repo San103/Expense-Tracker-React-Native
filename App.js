@@ -21,7 +21,7 @@ import {
 import IncomeExpenses from "./App/screens/IncomeExpenses";
 import UnderMentainance from "./App/components/UnderMentainance";
 import { DatabaseConnection } from "./App/components/Database/dbConnection";
-
+import Accounts from "./App/screens/Accounts";
 const Stack = createNativeStackNavigator();
 
 const db = DatabaseConnection.getConnection();
@@ -46,6 +46,7 @@ const StackNavigator = () => (
       component={UnderMentainance}
     />
     <Stack.Screen name="Register" component={Register} />
+    <Stack.Screen name="AllUsers" component={Accounts} />
     <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="HomeNav" component={BottomHomeNav} />
     <Stack.Screen name="AddIncomeExpense" component={AddIncomeExpenseNav} />

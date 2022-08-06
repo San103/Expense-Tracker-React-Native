@@ -1,9 +1,15 @@
-import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  BackHandler,
+} from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-
+import { useNavigation } from "@react-navigation/native";
 import Icon from "../components/Icon";
 import AddIncome from "./AddIncomeExpense/AddIncome";
 import AddExpense from "./AddIncomeExpense/AddExpense";
@@ -12,6 +18,20 @@ import colors from "../config/colors";
 const Tab = createBottomTabNavigator();
 
 function AddIncomeExpenseNav(props) {
+  const navigation = useNavigation();
+  function handleBackButtonClick() {
+    navigation.push("HomeNav");
+    return true;
+  }
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        handleBackButtonClick
+      );
+    };
+  }, []);
   return (
     <>
       <Tab.Navigator

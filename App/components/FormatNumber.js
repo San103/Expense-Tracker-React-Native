@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import NumberFormat from "react-number-format";
 
-function FormatNumber({ value2, size = 35 }) {
+function FormatNumber({ value2, size = 35, color = "white" }) {
   return (
     <View>
       <NumberFormat
@@ -16,7 +16,7 @@ function FormatNumber({ value2, size = 35 }) {
             style={{
               fontSize: size,
               fontFamily: "NunitoMedium",
-              color: "white",
+              color: color,
             }}
           >
             {value}

@@ -137,9 +137,14 @@ function IncomeExpenses() {
         end={{ x: 1, y: 3 }}
       >
         <View style={styles.balanceContainer}>
-          <AppText style={{ color: "#fff" }}>Total Balance</AppText>
+          <AppText style={{ color: "#fff" }}>
+            {balance < 0 ? "Debt" : "Total Balance"}
+          </AppText>
           <AppText style={{ marginTop: 10 }}>
-            <FormatNumber value2={balance} />
+            <FormatNumber
+              value2={balance}
+              color={balance < 0 ? "#fd1d1d" : "#fff"}
+            />
           </AppText>
         </View>
         <View style={styles.parentIncomeContainer}>

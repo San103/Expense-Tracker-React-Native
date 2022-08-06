@@ -53,7 +53,7 @@ function Login(props) {
           if (res.rows.length == 0) {
             txn.executeSql("DROP TABLE IF EXISTS table_income", []);
             txn.executeSql(
-              "CREATE TABLE IF NOT EXISTS table_income(income_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER(255) ,type VARCHAR(255),amountBalance INTEGER(1000000), date VARCHAR(255), category VARCHAR(255), note VARCHAR(255), repeat INTEGER(255), endDate VARCHAR(255))",
+              "CREATE TABLE IF NOT EXISTS table_income(income_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER(255) ,type VARCHAR(255),amountBalance INTEGER(1000000), date VARCHAR(255), dateMonth VARCHAR(255),  category VARCHAR(255),color VARCHAR(255), note VARCHAR(255), repeat INTEGER(255), endDate VARCHAR(255))",
               []
             );
           }

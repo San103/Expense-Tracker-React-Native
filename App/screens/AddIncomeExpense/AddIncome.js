@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import DateTimePickerAndroid from "@react-native-community/datetimepicker";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import moment from "moment";
 
 import AppReapetEnabled from "../../components/AppReapetEnabled";
 import AppEndDate from "../../components/DatePicker/AppEndDate";
@@ -77,15 +78,52 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
     setShow(true);
     setMode(currentMode);
   };
-
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const d = new Date();
+  const monthName = months[d.getMonth()];
   //Insert into Database
-  const insertData = (uid, bal, date, category, note, repeat, endDate) => {
+  const insertData = (
+    uid,
+    bal,
+    date,
+    month,
+    category,
+    bgColor,
+    note,
+    repeat,
+    endDate
+  ) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO table_income (user_id,type,amountBalance,date,category,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?,?)",
-        ["52", "income", bal, date, category, note, repeat, endDate],
+        "INSERT INTO table_income (user_id,type,amountBalance,date,dateMonth,category,color,note,repeat,endDate)  VALUES (?,?,?,?,?,?,?,?,?,?)",
+        [
+          "52",
+          "income",
+          bal,
+          date,
+          month,
+          category,
+          bgColor,
+          note,
+          repeat,
+          endDate,
+        ],
         (tx, results) => {
           if (results.rowsAffected > 0) {
+            console.log("sucess");
             navigation.navigate("SuccessIn");
           } else console.log("Error 404, not found");
         }
@@ -111,7 +149,9 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
               getid,
               AmountSalary,
               text,
+              monthName,
               category.label,
+              category.backgroundColor,
               note,
               "2",
               "01"
