@@ -7,6 +7,7 @@ function icon({
   styles,
   size = 80,
   backgroundColor = "red",
+  bRadius = 4,
   iconColor = "#fff",
 }) {
   return (
@@ -15,7 +16,7 @@ function icon({
         {
           width: size,
           height: size,
-          borderRadius: size / 4,
+          borderRadius: size / bRadius,
           backgroundColor,
           justifyContent: "center",
           alignItems: "center",

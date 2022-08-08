@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import AppText from "../AppText";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
@@ -7,7 +7,10 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 const size = 60;
 function ExpenseCatHome({ bg1, bg2, bg3, icon, label }) {
   return (
-    <View style={[styles.container]}>
+    <TouchableOpacity
+      style={[styles.container]}
+      onPress={() => console.log("Hello")}
+    >
       <LinearGradient
         style={styles.LGStyle}
         colors={[bg1, bg2, bg3]}
@@ -24,7 +27,7 @@ function ExpenseCatHome({ bg1, bg2, bg3, icon, label }) {
         )}
       </LinearGradient>
       <AppText style={[styles.textCategory]}>{label}</AppText>
-    </View>
+    </TouchableOpacity>
   );
 }
 const styles = StyleSheet.create({

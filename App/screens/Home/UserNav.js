@@ -1,5 +1,12 @@
-import React from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Modal,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../config/colors";
 import Icon from "../../components/Icon";
@@ -7,6 +14,7 @@ import AppText from "../../components/AppText";
 import { useNavigation } from "@react-navigation/native";
 
 function UserNav({ title, subtitle, image }) {
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   return (
     <SafeAreaView>
@@ -18,14 +26,73 @@ function UserNav({ title, subtitle, image }) {
             <AppText style={styles.subtitleStyle}>{subtitle}</AppText>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("SuccessIn")}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Icon name="cog" size={40} backgroundColor="white" iconColor="gray" />
         </TouchableOpacity>
       </View>
+      <Modal
+        visible={modalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          <View
+            style={{
+              width: 200,
+              height: 250,
+              borderRadius: 10,
+              backgroundColor: "rgba(255, 255, 255, 1)",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPressOut={() => {
+                setModalVisible(false);
+              }}
+            >
+              <Icon
+                name={"expand-arrows-alt"}
+                backgroundColor={colors.primarySecondPair}
+                iconColor={colors.white}
+                size={45}
+                bRadius={2}
+                styles={{
+                  marginVertical: 10,
+                  alignSelf: "center",
+                  borderColor: "transparent",
+                }}
+              />
+            </TouchableOpacity>
+            <AppText style={styles.textsAbout}>Contact Us</AppText>
+            <AppText style={styles.textsAbout}>About Us</AppText>
+            <AppText style={[styles.textsAbout, { color: "red" }]}>
+              Exit
+            </AppText>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
+  textsAbout: {
+    fontFamily: "NunitoMedium",
+    paddingVertical: 15,
+    fontSize: 20,
+    color: colors.dark,
+    textAlign: "center",
+  },
   containerParent: {
     flexDirection: "row",
     justifyContent: "space-between",

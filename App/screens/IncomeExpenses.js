@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, useWindowDimensions } from "react-native";
+import React, { useState, useEffect, useReducer } from "react";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ToastAndroid,
+  useWindowDimensions,
+  TouchableOpacity,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import moment from "moment";
 
 import AppText from "../components/AppText";
 import UserNav from "./Home/UserNav";
@@ -10,55 +18,112 @@ import Screen2 from "../components/Screen";
 import FormatNumber from "../components/FormatNumber";
 import ExpenseCat from "./AddIncomeExpense/DataCategories/ExpenseCat";
 import ExpenseCatHome from "../components/IncomeExpenseComp/ExpenseCatHome";
-import AsyncRetrieveData from "../components/AsyncRetrieveData";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { DatabaseConnection } from "../components/Database/dbConnection";
-
-const listTransac = () => [
-  {
-    id: 1,
-    title: "Food",
-    note: "whatever",
-    name: "fast-food",
-    Linearbackground2: "#ef4136",
-    Linearbackground: "#fbb040",
-    subtitle: "-$ 400.00",
-    DateTransac: "Today",
-  },
-];
 
 const db = DatabaseConnection.getConnection();
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "error":
+      return {
+        expenseList: [],
+      };
+    case "loading":
+      return {
+        expenseList: console.log("Looading..."),
+      };
+    case "all":
+      return {
+        expenseList: action.payload,
+      };
+    case "Clothes":
+      return {
+        expenseList: action.payload,
+      };
+    case "Foods":
+      return {
+        expenseList: action.payload,
+      };
+    case "Fuel":
+      return {
+        expenseList: action.payload,
+      };
+    case "Gadget":
+      return {
+        expenseList: action.payload,
+      };
+    case "Gifts":
+      return {
+        expenseList: action.payload,
+      };
+    case "School":
+      return {
+        expenseList: action.payload,
+      };
+    case "Transportation":
+      return {
+        expenseList: action.payload,
+      };
+    case "Utility Bill":
+      return {
+        expenseList: action.payload,
+      };
+    default:
+      return console.log("No record");
+  }
+};
+//transac();
 function IncomeExpenses() {
+  const [state, dispatch] = useReducer(reducer, { expenseList: [] });
   const [balance, setBalance] = useState();
   const [totalIncome, setTotalIncome] = useState();
   const [totalExpense, setTotalExpense] = useState();
   const [username, setUsername] = useState();
-
+  const [loading, setLoading] = useState(false);
   const [flatListItems, setFlatListItems] = useState([]);
 
   useEffect(() => {
-    transac();
+    dispatch({ type: "loading" });
+    transac().then((listExpense) => {
+      dispatch({
+        type: "all",
+        payload: listExpense,
+      });
+    });
     getTotalBal();
-    getUsername();
+    getUsername().then((user) => {
+      setUsername(user);
+    });
   }, []);
+
+  //console.log(flatListItems);
+  //console.log(state.expenseList);
   //Current Date to Display Default
   const dateNow = new Date().getDate();
   const month = new Date().getMonth();
   const year = new Date().getFullYear();
-  const dateToday = dateNow + "/" + (month + 1) + "/" + year;
-  const dateYesterday = dateNow - 1 + "/" + (month + 1) + "/" + year;
+  const dateToday = year + "" + (month + 1) + "" + dateNow;
+  const dateToday2 = year + "/" + (month + 1) + "/" + dateNow;
+  const dateYesterday = year + "" + (month + 1) + "" + dateNow - 1;
+  const dateYesterday2 = year + "/" + (month + 1) + "/" + dateNow - 1;
+
   //get Transactions
   const transac = () => {
-    db.transaction((tx) => {
-      tx.executeSql("SELECT * FROM table_income", [], (tx, results) => {
-        var temp = [];
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-          setFlatListItems(temp);
-        }
+    return new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql("SELECT * FROM table_income", [], (tx, results) => {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+            resolve(temp);
+            setFlatListItems(temp);
+          }
+        });
       });
     });
   };
+
   // get Total Balance
   const getTotalBal = () =>
     db.transaction((tx) => {
@@ -99,15 +164,18 @@ function IncomeExpenses() {
 
   //get Username
   const getUsername = () => {
-    db.transaction((tx) => {
-      tx.executeSql("SELECT username FROM table_user", [], (tx, results) => {
-        if (results.rows.length > 0) {
-          const tot = results.rows.item(0).username;
-          setUsername(tot);
-        }
+    return new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql("SELECT username FROM table_user", [], (tx, results) => {
+          if (results.rows.length > 0) {
+            const tot = results.rows.item(0).username;
+            resolve(tot);
+          }
+        });
       });
     });
   };
+
   //Delete all Transactions
   const deleteTransactions = () =>
     db.transaction((tx) => {
@@ -120,6 +188,49 @@ function IncomeExpenses() {
       });
     });
 
+  //get Category when Clicked
+  const setSelectCategoryByName = (name) => {
+    let categoryName = flatListItems.filter((a) => a.category == name);
+
+    //console.log(state.expenseList);
+    if (categoryName == "") {
+      dispatch({ type: "error" });
+      ToastAndroid.show("No Record Found!", ToastAndroid.SHORT);
+    } else {
+      dispatch({ type: name, payload: categoryName });
+    }
+  };
+  //console.log(flatListItems);
+  const renderItemClicked = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={[styles.containerRender]}
+        onPress={() => {
+          let categoryTitle = item.label;
+          setSelectCategoryByName(categoryTitle);
+        }}
+      >
+        <LinearGradient
+          style={styles.LGStyle}
+          colors={[
+            item.backgroundColor,
+            item.backgroundColor1,
+            item.backgroundColor2,
+          ]}
+          start={{ x: 0, y: 0.2 }}
+          end={{ x: 0.8, y: 1.2 }}
+        >
+          <FontAwesome5Icon
+            name={item.icon}
+            size={60 * 0.4}
+            color="#fff"
+            style={styles.icon}
+          />
+        </LinearGradient>
+        <AppText style={[styles.textCategory]}>{item.label}</AppText>
+      </TouchableOpacity>
+    );
+  };
   //getDimension
   const { height, width } = useWindowDimensions();
   const [refreshing, setRefreshing] = useState(false);
@@ -213,15 +324,7 @@ function IncomeExpenses() {
             horizontal={true}
             data={ExpenseCat}
             keyExtractor={(ExpenseCat) => ExpenseCat.value.toString()}
-            renderItem={({ item }) => (
-              <ExpenseCatHome
-                bg1={item.backgroundColor}
-                bg2={item.backgroundColor1}
-                bg3={item.backgroundColor2}
-                icon={item.icon}
-                label={item.label}
-              />
-            )}
+            renderItem={renderItemClicked}
           />
         </View>
       </View>
@@ -232,7 +335,7 @@ function IncomeExpenses() {
             justifyContent: "space-between",
           }}
         >
-          <AppText>Recent Transactions</AppText>
+          <AppText>Transactions</AppText>
           <AppText style={{ color: "gray", fontSize: 12 }}>View All</AppText>
         </View>
 
@@ -240,7 +343,7 @@ function IncomeExpenses() {
           <FlatList
             showsVerticalScrollIndicator={false}
             horizontal={false}
-            data={flatListItems}
+            data={state.expenseList}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <ListTransaction
@@ -351,9 +454,10 @@ function IncomeExpenses() {
                     : { color: "#F63145" }
                 }
                 DateTransac={
-                  item.date === dateToday
+                  item.date === dateToday || item.date === dateToday2
                     ? "Today"
-                    : item.date === dateYesterday
+                    : item.date === dateYesterday ||
+                      item.date === dateYesterday2
                     ? "Yesterday"
                     : item.date
                 }
@@ -393,6 +497,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 40,
+  },
+  containerRender: {
+    height: 100,
+    marginHorizontal: 10,
+    width: 60,
+  },
+  LGStyle: {
+    height: 60,
+    width: 60,
+    flexDirection: "row",
+    borderRadius: 60 / 4,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+    shadowColor: "#b3aba2",
+    elevation: 5,
+  },
+  textCategory: {
+    color: "#9E9E9E",
+    textAlignVertical: "center",
+    alignSelf: "center",
+    height: 35,
+    fontSize: 12,
+  },
+  icon: {
+    justifyContent: "center",
   },
 });
 

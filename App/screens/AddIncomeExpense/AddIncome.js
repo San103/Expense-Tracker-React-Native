@@ -123,7 +123,6 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
         ],
         (tx, results) => {
           if (results.rowsAffected > 0) {
-            console.log("sucess");
             navigation.navigate("SuccessIn");
           } else console.log("Error 404, not found");
         }
@@ -258,7 +257,7 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
                 onChangeText={handleChange("note")}
               />
 
-              <View style={styles.SwitchStyle}>
+              {/* <View style={styles.SwitchStyle}>
                 <AppText
                   fontSize={20}
                   color="gray"
@@ -298,9 +297,10 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
                   <AppReapetEnabled></AppReapetEnabled>
                   <AppEndDate />
                 </View>
-              </Animated.View>
+              </Animated.View> */}
               <Button
                 style={{
+                  marginTop: 20,
                   height: 45,
                   marginBottom: 80,
                   justifyContent: "center",

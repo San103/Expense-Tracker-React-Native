@@ -56,6 +56,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const sanDate = moment(dateToday.setMonth(dateToday.getMonth())).format(
     "YYYYMD"
   );
+  const san2Date = dateNow + "/" + (month + 1) + "/" + year;
 
   //useState For Setting Date
   const [date, setDate] = useState(new Date());
@@ -63,6 +64,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [text, setText] = useState("" + sanDate);
+  const [text2, setText2] = useState("" + san2Date);
 
   const months = [
     "January",
@@ -90,8 +92,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   } else {
     monthName = months[r - 1];
   }
-  // console.log(monthName);
-  // console.log(monthName2);
+
   //Function Date
   const onChange = (event, selectedData) => {
     const currentDate = selectedData || date;
@@ -110,6 +111,14 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
       tempDate.getDate();
 
     setText(fDate);
+
+    let fDate2 =
+      tempDate.getDate() +
+      "/" +
+      (tempDate.getMonth() + 1) +
+      "/" +
+      tempDate.getFullYear();
+    setText2(fDate2);
   };
   const showMode = (currentMode) => {
     setShow(true);
@@ -245,7 +254,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
                       />
                     )}
                   </LinearGradient>
-                  <AppText style={[styles.textLabel]}>{text}</AppText>
+                  <AppText style={[styles.textLabel]}>{text2}</AppText>
                   <FontAwesome5Icon
                     name={"chevron-down"}
                     size={20}
@@ -279,7 +288,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
                 onChangeText={handleChange("note")}
               />
 
-              <View style={styles.SwitchStyle}>
+              {/* <View style={styles.SwitchStyle}>
                 <AppText
                   fontSize={20}
                   color="gray"
@@ -319,9 +328,10 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
                   <AppReapetEnabled></AppReapetEnabled>
                   <AppEndDate />
                 </View>
-              </Animated.View>
+              </Animated.View> */}
               <Button
                 style={{
+                  marginTop: 20,
                   height: 45,
                   marginBottom: 80,
                   justifyContent: "center",

@@ -17,6 +17,8 @@ import {
 import {
   Nunito_400Regular as NunitoRegular,
   Nunito_500Medium as NunitoMedium,
+  Nunito_600SemiBold as NunitoSemiBold,
+  Nunito_700Bold as NunitoBold,
 } from "@expo-google-fonts/nunito";
 import IncomeExpenses from "./App/screens/IncomeExpenses";
 import UnderMentainance from "./App/components/UnderMentainance";
@@ -59,8 +61,10 @@ export default function App() {
     MontserratRegular,
     MontserratMedium,
     MontserratSemibold,
+    NunitoSemiBold,
     NunitoRegular,
     NunitoMedium,
+    NunitoBold,
   });
 
   if (!fontsLoaded) {

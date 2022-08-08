@@ -241,7 +241,7 @@ function Transactions() {
   return <MyExpenses />;
 }
 function Categories() {
-  return <Accounts2 />;
+  return <Predictions />;
 }
 function Accounts() {
   return <HistoryTransaction />;

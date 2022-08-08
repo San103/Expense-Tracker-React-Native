@@ -4,8 +4,11 @@ import AppText from "../../components/AppText";
 import colors from "../../config/colors";
 import Icon from "../../components/Icon";
 import Screen from "../../components/Screen";
+import moment from "moment";
 
 function Header(props) {
+  const dateCurrent = moment().endOf("day").format("DD MMMM YYYY");
+
   return (
     <Screen
       style={{
@@ -17,7 +20,7 @@ function Header(props) {
     >
       <View style={{ height: "100%" }}>
         <View style={styles.headerTitle}>
-          <AppText style={styles.titleExpense}>My Expenses</AppText>
+          <AppText style={styles.titleExpense}>Expenses & Income</AppText>
           <AppText>Summary (private)</AppText>
         </View>
         <View style={styles.headerSecond}>
@@ -29,12 +32,11 @@ function Header(props) {
             size={40}
           />
           <View style={styles.dateStyle}>
-            <AppText style={styles.titleSecond}>05 August 2022</AppText>
-            <AppText>18% more than the last month</AppText>
+            <AppText style={styles.titleSecond}>{dateCurrent}</AppText>
+            <AppText>Current Month Summary</AppText>
           </View>
         </View>
       </View>
-      <View></View>
     </Screen>
   );
 }
