@@ -19,6 +19,7 @@ const Tab = createBottomTabNavigator();
 
 function AddIncomeExpenseNav(props) {
   const navigation = useNavigation();
+
   function handleBackButtonClick() {
     navigation.push("HomeNav");
     return true;
@@ -66,27 +67,28 @@ function AddIncomeExpenseNav(props) {
               }}
             >
               <Icon
-                size={40}
+                size={50}
                 name="chevron-left"
-                backgroundColor="white"
+                backgroundColor="transparent"
+                styles={{ borderWidth: 0 }}
                 iconColor={colors.dark}
               />
             </TouchableOpacity>
           ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate("AstronotUnderMentainance");
-              }}
-            >
-              <Icon
-                size={40}
-                name="question"
-                backgroundColor="white"
-                iconColor={colors.dark}
-              />
-            </TouchableOpacity>
-          ),
+          // headerRight: () => (
+          //   <TouchableOpacity
+          //     onPress={() => {
+          //       props.navigation.navigate("AstronotUnderMentainance");
+          //     }}
+          //   >
+          //     <Icon
+          //       size={40}
+          //       name="question"
+          //       backgroundColor="white"
+          //       iconColor={colors.dark}
+          //     />
+          //   </TouchableOpacity>
+          // ),
         }}
       >
         <Tab.Screen

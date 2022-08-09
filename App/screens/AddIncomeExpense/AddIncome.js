@@ -48,17 +48,18 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
   const navigation = useNavigation();
   const [getid, setId] = useState();
 
-  //Current Date to Display Default
-  const dateNow = new Date().getDate();
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
-  const sanDate = dateNow + "/" + (month + 1) + "/" + year;
+  //console.log(dateNow);
+  const dateToday = new Date();
+  const sanDate = moment(dateToday.setMonth(dateToday.getMonth())).format(
+    "YYYYMMDD"
+  );
 
   //useState For Setting Date
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-  const [text, setText] = useState("" + sanDate);
+  const [dateText, setDateText] = useState("" + sanDate);
+  const [textDisplay, setTextDisplay] = useState("" + "Today");
 
   //Function Date
   const onChange = (event, selectedData) => {
@@ -66,18 +67,25 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
     setShow();
     setDate(currentDate);
     let tempDate = new Date(currentDate);
-    let fDate =
-      tempDate.getDate() +
-      "/" +
-      (tempDate.getMonth() + 1) +
-      "/" +
-      tempDate.getFullYear();
-    setText(fDate);
+    //Date for DAtabse save
+    let fDate = moment(tempDate.setMonth(tempDate.getMonth())).format(
+      "YYYYMMDD"
+    );
+    setDateText(fDate);
+
+    //Date For Displya
+    let dateToDisplay = moment(tempDate.setMonth(tempDate.getMonth())).format(
+      "MMMM DD, YYYY"
+    );
+    setTextDisplay(dateToDisplay);
   };
+
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
+
+  //Insert Month into DB
   const months = [
     "January",
     "February",
@@ -147,7 +155,7 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
             insertData(
               getid,
               AmountSalary,
-              text,
+              dateText,
               monthName,
               category.label,
               category.backgroundColor,
@@ -223,7 +231,7 @@ function AddIncome({ icon = "calendar-alt", iconColor = "#fff" }) {
                       />
                     )}
                   </LinearGradient>
-                  <AppText style={[styles.textLabel]}>{text}</AppText>
+                  <AppText style={[styles.textLabel]}>{textDisplay}</AppText>
                   <FontAwesome5Icon
                     name={"chevron-down"}
                     size={20}

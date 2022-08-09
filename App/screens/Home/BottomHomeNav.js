@@ -104,7 +104,7 @@ function BottomHomeNav(props) {
             tabBarIcon: ({ focused }) => (
               <View style={styles.centeringIcon}>
                 <FontAwesome5
-                  name="book"
+                  name="chart-bar"
                   size={20}
                   color={focused ? "#2d388a" : "gray"}
                 ></FontAwesome5>
@@ -166,7 +166,7 @@ function BottomHomeNav(props) {
             tabBarIcon: ({ focused }) => (
               <View style={styles.centeringIcon}>
                 <MaterialIcons
-                  name="category"
+                  name="lightbulb"
                   size={23}
                   color={focused ? "#2d388a" : "gray"}
                 ></MaterialIcons>
@@ -190,7 +190,7 @@ function BottomHomeNav(props) {
             tabBarIcon: ({ focused }) => (
               <View style={styles.centeringIcon}>
                 <FontAwesome5
-                  name="user-alt"
+                  name="history"
                   size={20}
                   color={focused ? "#2d388a" : "gray"}
                 ></FontAwesome5>

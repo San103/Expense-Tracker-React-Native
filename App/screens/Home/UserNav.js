@@ -16,6 +16,9 @@ import { useNavigation } from "@react-navigation/native";
 function UserNav({ title, subtitle, image }) {
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  // const ContactLinking = () => {
+  //   Linking.openURL("https://www.google.com");
+  // };
   return (
     <SafeAreaView>
       <View style={styles.containerParent}>
@@ -74,8 +77,12 @@ function UserNav({ title, subtitle, image }) {
                 }}
               />
             </TouchableOpacity>
-            <AppText style={styles.textsAbout}>Contact Us</AppText>
-            <AppText style={styles.textsAbout}>About Us</AppText>
+            <TouchableOpacity onPress={() => null}>
+              <AppText style={styles.textsAbout}>Contact Us</AppText>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("AboutUs")}>
+              <AppText style={styles.textsAbout}>About Us</AppText>
+            </TouchableOpacity>
             <AppText style={[styles.textsAbout, { color: "red" }]}>
               Exit
             </AppText>
@@ -102,8 +109,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   image: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
     borderRadius: 45 / 2,
     marginRight: 10,
   },

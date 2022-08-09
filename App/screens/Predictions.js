@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Animated,
+  Easing,
   useWindowDimensions,
   Dimensions,
 } from "react-native";
@@ -15,26 +17,46 @@ import { BarChart, LineChart } from "react-native-chart-kit";
 import Icon from "../components/Icon";
 import FormatNumber from "../components/FormatNumber";
 import colors from "../config/colors";
+import LottieView from "lottie-react-native";
+import UnderMentainance from "../components/UnderMentainance";
 
 const db = DatabaseConnection.getConnection();
 function Predictions(props) {
+  const animationProgress = useRef(new Animated.Value(0));
   const { height, width } = useWindowDimensions();
   const [selectedCategory, setSelectedCategory] = useState();
   const [getSwitch, setSwitch] = useState(true);
   const [getCount, setCount] = useState([]);
   const [getUnesserary, setUnessesary] = useState([]);
-
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(animationProgress.current, {
+        toValue: 1,
+        duration: 5000,
+        easing: Easing.linear,
+        useNativeDriver: false,
+      })
+    ).start();
+  }, []);
   useEffect(() => {
     getNecessaryExpense();
     getUnesseraryExpense();
   }, []);
   const monthNext = moment().endOf("month").add(1, "M").format("MMMM");
+  const startOfMonth = moment().startOf("month").format("DD");
+  const endOfMonth = moment().endOf("month").format("DD");
+  //Current Date to Display Default
+
+  //get Date Today default
+  const dateToday = moment(new Date()).format("YYYYMMDD");
+  const dateFirstMonth = moment().startOf("month").format("YYYYMMDD");
+  //console.log(startOfMonth);
 
   const getNecessaryExpense = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT color,income_id,category,COUNT(category) as count,SUM(amountBalance) as total FROM table_income where type=? GROUP BY category ORDER BY count DESC LIMIT 4",
-        ["expense"],
+        "SELECT color,income_id,category,COUNT(category) as count,SUM(amountBalance) as total FROM table_income where type=? and date >= ? and date <= ? GROUP BY category ORDER BY count DESC LIMIT 4",
+        ["expense", dateFirstMonth, dateToday],
         (tx, results) => {
           const temp = [];
           for (let i = 0; i < results.rows.length; ++i)
@@ -47,8 +69,8 @@ function Predictions(props) {
   const getUnesseraryExpense = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT color,income_id,category,COUNT(category) as count,SUM(amountBalance) as total FROM table_income where type=? GROUP BY category ORDER BY count ASC LIMIT 4",
-        ["expense"],
+        "SELECT color,income_id,category,COUNT(category) as count,SUM(amountBalance) as total FROM table_income where type=? and date >= ? and date <= ? GROUP BY category ORDER BY count ASC LIMIT 4",
+        ["expense", dateFirstMonth, dateToday],
         (tx, results) => {
           const temp = [];
           for (let i = 0; i < results.rows.length; ++i)
@@ -93,60 +115,56 @@ function Predictions(props) {
     let catDisplay = getNecessaryToDisplay();
     let getCategoryName = catDisplay.map((item) => item.category);
     let getCategoryTotal = catDisplay.map((item) => item.total);
-    let getCategoryLength = catDisplay.map((item) => item.length);
+
     return (
       <>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {getCategoryLength < 2 ? (
-            <AppText>Please add more Expenses for Prediction</AppText>
-          ) : (
-            <LineChart
-              data={{
-                labels: getCategoryName,
-                datasets: [
-                  {
-                    data: getCategoryTotal,
-                  },
-                ],
-              }}
-              width={Dimensions.get("window").width - 20} // from react-native
-              height={250}
-              yAxisLabel="₱"
-              yAxisSuffix=""
-              yAxisInterval={1} // optional, defaults to 1
-              chartConfig={{
-                backgroundColor: "#000",
-                backgroundGradientFrom: "#FB6186",
-                backgroundGradientTo: "#FB7C1B",
-                decimalPlaces: 2, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
+          <LineChart
+            data={{
+              labels: getCategoryName,
+              datasets: [
+                {
+                  data: getCategoryTotal,
                 },
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#ffa726",
-                },
-              }}
-              bezier
-              style={{
-                marginVertical: 8,
+              ],
+            }}
+            width={Dimensions.get("window").width - 20} // from react-native
+            height={250}
+            yAxisLabel="₱"
+            yAxisSuffix=""
+            yAxisInterval={1} // optional, defaults to 1
+            chartConfig={{
+              backgroundColor: "#000",
+              backgroundGradientFrom: "#FB6186",
+              backgroundGradientTo: "#FB7C1B",
+              decimalPlaces: 2, // optional, defaults to 2dp
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
                 borderRadius: 16,
-                backgroundColor: "transparent",
-                shadowColor: "gray",
-                elevation: 5,
-              }}
-              onDataPointClick={({ value, getColor, x, y, index }) => {
-                let categoryName = value;
-                setSelectCategoryByName(categoryName);
-                // setAxis([x, y]);
-                // setVal(value);
-                // return setModalVisible(true);
-              }}
-            />
-          )}
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#ffa726",
+              },
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+              backgroundColor: "transparent",
+              shadowColor: "gray",
+              elevation: 5,
+            }}
+            onDataPointClick={({ value, getColor, x, y, index }) => {
+              let categoryName = value;
+              setSelectCategoryByName(categoryName);
+              // setAxis([x, y]);
+              // setVal(value);
+              // return setModalVisible(true);
+            }}
+          />
         </View>
       </>
     );
@@ -159,48 +177,44 @@ function Predictions(props) {
     return (
       <>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {getCategoryLength < 2 ? (
-            <AppText>Please add more Expenses for Prediction</AppText>
-          ) : (
-            <BarChart
-              data={{
-                labels: getCategoryName,
-                datasets: [
-                  {
-                    data: getCategoryTotal,
-                  },
-                ],
-              }}
-              width={Dimensions.get("window").width - 20} // from react-native
-              height={250}
-              yAxisLabel="₱"
-              yAxisSuffix=""
-              yAxisInterval={1} // optional, defaults to 1
-              chartConfig={{
-                backgroundColor: "#000",
-                backgroundGradientFrom: "#4CA2CD",
-                backgroundGradientTo: "#EE0979",
-                decimalPlaces: 2, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
+          <BarChart
+            data={{
+              labels: getCategoryName,
+              datasets: [
+                {
+                  data: getCategoryTotal,
                 },
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#EE0979",
-                },
-              }}
-              bezier
-              style={{
-                marginVertical: 8,
+              ],
+            }}
+            width={Dimensions.get("window").width - 20} // from react-native
+            height={250}
+            yAxisLabel="₱"
+            yAxisSuffix=""
+            yAxisInterval={1} // optional, defaults to 1
+            chartConfig={{
+              backgroundColor: "#000",
+              backgroundGradientFrom: "#4CA2CD",
+              backgroundGradientTo: "#EE0979",
+              decimalPlaces: 2, // optional, defaults to 2dp
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
                 borderRadius: 16,
-                shadowColor: "gray",
-                elevation: 5,
-              }}
-            />
-          )}
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#EE0979",
+              },
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+              shadowColor: "gray",
+              elevation: 5,
+            }}
+          />
         </View>
       </>
     );
@@ -210,6 +224,7 @@ function Predictions(props) {
     let catDisplay = getNecessaryToDisplay();
     let totalExpense = catDisplay.reduce((a, b) => a + (b.total || 0), 0);
     let totalItem = catDisplay.reduce((a, b) => a + (b.count || 0), 0);
+    let getCategoryLength = catDisplay.map((item) => item.length);
     const renderItem = ({ item }) => {
       return (
         <TouchableOpacity
@@ -270,80 +285,84 @@ function Predictions(props) {
     };
 
     return (
-      <View style={{ height: height - 80 }}>
-        <FlatList
-          data={dataFrom}
-          renderItem={renderItem}
-          keyExtractor={(item) => `${item.id}`}
-          ListHeaderComponent={
-            <Screen>
-              <View
-                style={{
-                  marginTop: 18,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ flexDirection: "column" }}>
-                  <AppText style={styles.statisticsTitle}>
-                    Necessary Expenses
-                  </AppText>
-
-                  <AppText style={styles.statisticsDate}>
-                    Prediction for {monthNext}
-                  </AppText>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setSwitch(!getSwitch);
+      <View style={{ height: height - 80, marginTop: 20 }}>
+        {getCategoryLength < 2 ? (
+          <UnderMentainance />
+        ) : (
+          <FlatList
+            data={dataFrom}
+            renderItem={renderItem}
+            keyExtractor={(item) => `${item.id}`}
+            ListHeaderComponent={
+              <Screen>
+                <View
+                  style={{
+                    marginTop: 18,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Icon
-                    name={getSwitch === true ? "chart-line" : "chart-bar"}
-                    backgroundColor={
-                      getSwitch === true
-                        ? colors.primarySecond
-                        : colors.primarySecondPair
-                    }
-                    iconColor={"#fff"}
-                    size={45}
-                    bRadius={2}
-                    styles={{ borderColor: "transparent" }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {renderBarChartNecessary()}
-              <View
-                style={[
-                  styles.containerParent,
-                  { width: width - 20, height: height - 900 },
-                ]}
-              >
-                <View style={styles.predictStyle}>
-                  <View style={{ alignItems: "center" }}>
-                    <AppText>Predicted Amount</AppText>
-                    <AppText style={styles.amountPredicted}>
-                      <FormatNumber
-                        value2={totalExpense.toFixed(2)}
-                        color={"#FB6186"}
-                        size={25}
-                        styles={{ fontFamily: "NunitoBold" }}
-                      />
+                  <View style={{ flexDirection: "column" }}>
+                    <AppText style={styles.statisticsTitle}>
+                      Necessary Expenses
+                    </AppText>
+
+                    <AppText style={styles.statisticsDate}>
+                      Prediction for {monthNext}
                     </AppText>
                   </View>
-                  <View style={{ alignItems: "center" }}>
-                    <AppText>Predicted Item </AppText>
-                    <AppText style={styles.amountPredicted}>
-                      {totalItem}
-                    </AppText>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSwitch(!getSwitch);
+                    }}
+                  >
+                    <Icon
+                      name={getSwitch === true ? "chart-line" : "chart-bar"}
+                      backgroundColor={
+                        getSwitch === true
+                          ? colors.primarySecond
+                          : colors.primarySecondPair
+                      }
+                      iconColor={"#fff"}
+                      size={45}
+                      bRadius={2}
+                      styles={{ borderColor: "transparent" }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {renderBarChartNecessary()}
+                <View
+                  style={[
+                    styles.containerParent,
+                    { width: width - 20, height: height - 900 },
+                  ]}
+                >
+                  <View style={styles.predictStyle}>
+                    <View style={{ alignItems: "center" }}>
+                      <AppText>Predicted Amount</AppText>
+                      <AppText style={styles.amountPredicted}>
+                        <FormatNumber
+                          value2={totalExpense.toFixed(2)}
+                          color={"#FB6186"}
+                          size={25}
+                          styles={{ fontFamily: "NunitoBold" }}
+                        />
+                      </AppText>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                      <AppText>Predicted Item </AppText>
+                      <AppText style={styles.amountPredicted}>
+                        {totalItem}
+                      </AppText>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <AppText style={{ fontSize: 18 }}>Predicted Categories</AppText>
-            </Screen>
-          }
-        />
+                <AppText style={{ fontSize: 18 }}>Predicted Categories</AppText>
+              </Screen>
+            }
+          />
+        )}
       </View>
     );
   };
@@ -399,7 +418,7 @@ function Predictions(props) {
     };
 
     return (
-      <View style={{ height: height - 80 }}>
+      <View style={{ height: height - 80, marginTop: 20 }}>
         <FlatList
           data={dataFrom}
           renderItem={renderItem}

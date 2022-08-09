@@ -13,8 +13,11 @@ import Header from "./Expenses/Header";
 import Icon from "../components/Icon";
 import colors from "../config/colors";
 import { VictoryPie } from "victory-native";
+import moment from "moment";
 import { DatabaseConnection } from "../components/Database/dbConnection";
+
 const db = DatabaseConnection.getConnection();
+
 function MyExpenses(props) {
   const [viewMode, setViewMode] = useState("expenses");
   const { height, width } = useWindowDimensions();
@@ -25,11 +28,8 @@ function MyExpenses(props) {
   const [selectedCategory2, setSelectedCategory2] = useState();
 
   //Current Date to Display Default
-  const dateNow = new Date().getDate();
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
-  const sanDate = dateNow + "/" + (month + 1) + "/" + year;
-  const date2 = 1 + "/" + (month + 1) + "/" + year;
+  const dateToday = moment(new Date()).format("YYYYMMDD");
+  const dateFirstMonth = moment().startOf("month").format("YYYYMMDD");
 
   useEffect(() => {
     getDateNow();
@@ -40,8 +40,8 @@ function MyExpenses(props) {
   const getDateNow = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT color,income_id,category, SUM(amountBalance) as totalAmount FROM table_income where type=? and date >= ? and date <= ? group by category",
-        ["expense", date2, sanDate],
+        "SELECT date, color,income_id,category, SUM(amountBalance) as totalAmount FROM table_income where type=? and date >= ? and date <= ? group by category",
+        ["expense", dateFirstMonth, dateToday],
 
         (tx, results) => {
           const temp = [];
@@ -58,7 +58,7 @@ function MyExpenses(props) {
     db.transaction((tx) => {
       tx.executeSql(
         "SELECT color,income_id,category, SUM(amountBalance) as totalAmount FROM table_income where type=? and date >= ? and date <= ? group by category",
-        ["income", date2, sanDate],
+        ["income", dateFirstMonth, dateToday],
 
         (tx, results) => {
           const temp = [];

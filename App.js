@@ -24,6 +24,8 @@ import IncomeExpenses from "./App/screens/IncomeExpenses";
 import UnderMentainance from "./App/components/UnderMentainance";
 import { DatabaseConnection } from "./App/components/Database/dbConnection";
 import Accounts from "./App/screens/Accounts";
+import ViewAllTransac from "./App/screens/Expenses/ViewAllTransac";
+import AboutUs from "./App/screens/Home/AboutUs";
 const Stack = createNativeStackNavigator();
 
 const db = DatabaseConnection.getConnection();
@@ -47,8 +49,10 @@ const StackNavigator = () => (
       name="AstronotUnderMentainance"
       component={UnderMentainance}
     />
+    <Stack.Screen name="ViewAllTransactions" component={ViewAllTransac} />
     <Stack.Screen name="Register" component={Register} />
     <Stack.Screen name="AllUsers" component={Accounts} />
+    <Stack.Screen name="AboutUs" component={AboutUs} />
     <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="HomeNav" component={BottomHomeNav} />
     <Stack.Screen name="AddIncomeExpense" component={AddIncomeExpenseNav} />

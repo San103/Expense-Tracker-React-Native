@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 
 import AppText from "../components/AppText";
@@ -23,6 +24,24 @@ import { DatabaseConnection } from "../components/Database/dbConnection";
 
 const db = DatabaseConnection.getConnection();
 
+//Add All item for List
+const addAll = {
+  label: "All",
+  value: 0,
+  icon: "list-ul",
+  backgroundColor: "#FFCDA5",
+  backgroundColor1: "#EE4D5F",
+  backgroundColor2: "#FF5B94",
+};
+//function to add the value into the array
+const insert = (arr, index, ...newItems) => [
+  ...arr.slice(0, index),
+  ...newItems,
+  ...arr.slice(index),
+];
+const result = insert(ExpenseCat, 0, addAll);
+
+//Reducer for useReducer
 const reducer = (state, action) => {
   switch (action.type) {
     case "error":
@@ -82,6 +101,7 @@ function IncomeExpenses() {
   const [username, setUsername] = useState();
   const [loading, setLoading] = useState(false);
   const [flatListItems, setFlatListItems] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     dispatch({ type: "loading" });
@@ -97,17 +117,10 @@ function IncomeExpenses() {
     });
   }, []);
 
-  //console.log(flatListItems);
-  //console.log(state.expenseList);
-  //Current Date to Display Default
-  const dateNow = new Date().getDate();
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
-  const dateToday = year + "" + (month + 1) + "" + dateNow;
-  const dateToday2 = year + "/" + (month + 1) + "/" + dateNow;
-  const dateYesterday = year + "" + (month + 1) + "" + dateNow - 1;
-  const dateYesterday2 = year + "/" + (month + 1) + "/" + dateNow - 1;
-
+  //get Date Today default
+  const dateToday = moment(new Date()).format("YYYYMMDD");
+  const yesterday = moment().subtract(1, "days");
+  const dateYesterday = moment(yesterday).format("YYYYMMDD");
   //get Transactions
   const transac = () => {
     return new Promise((resolve, reject) => {
@@ -190,14 +203,17 @@ function IncomeExpenses() {
 
   //get Category when Clicked
   const setSelectCategoryByName = (name) => {
-    let categoryName = flatListItems.filter((a) => a.category == name);
-
-    //console.log(state.expenseList);
-    if (categoryName == "") {
-      dispatch({ type: "error" });
-      ToastAndroid.show("No Record Found!", ToastAndroid.SHORT);
+    if (name === "All") {
+      dispatch({ type: "all", payload: flatListItems });
     } else {
-      dispatch({ type: name, payload: categoryName });
+      let categoryName = flatListItems.filter((a) => a.category == name);
+      //console.log(state.expenseList);
+      if (categoryName == "") {
+        dispatch({ type: "error" });
+        ToastAndroid.show("No Record for " + name, ToastAndroid.SHORT);
+      } else {
+        dispatch({ type: name, payload: categoryName });
+      }
     }
   };
   //console.log(flatListItems);
@@ -237,7 +253,7 @@ function IncomeExpenses() {
   return (
     <Screen2>
       <UserNav
-        image={require("../assets/man.png")}
+        image={require("../assets/iconPerson.png")}
         title="Welcome"
         subtitle={username}
       />
@@ -322,7 +338,7 @@ function IncomeExpenses() {
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-            data={ExpenseCat}
+            data={result}
             keyExtractor={(ExpenseCat) => ExpenseCat.value.toString()}
             renderItem={renderItemClicked}
           />
@@ -336,7 +352,11 @@ function IncomeExpenses() {
           }}
         >
           <AppText>Transactions</AppText>
-          <AppText style={{ color: "gray", fontSize: 12 }}>View All</AppText>
+          <TouchableOpacity
+            onPress={() => navigation.push("ViewAllTransactions")}
+          >
+            <AppText style={{ color: "gray", fontSize: 12 }}>View All</AppText>
+          </TouchableOpacity>
         </View>
 
         <View style={{ height: height - 560, marginTop: 15 }}>
@@ -454,12 +474,11 @@ function IncomeExpenses() {
                     : { color: "#F63145" }
                 }
                 DateTransac={
-                  item.date === dateToday || item.date === dateToday2
+                  item.date === dateToday
                     ? "Today"
-                    : item.date === dateYesterday ||
-                      item.date === dateYesterday2
+                    : item.date === dateYesterday
                     ? "Yesterday"
-                    : item.date
+                    : moment(item.date).format("MMM. DD, YYYY")
                 }
                 inputUserIdPassed={item.income_id}
               />

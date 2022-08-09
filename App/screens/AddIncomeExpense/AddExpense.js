@@ -48,15 +48,11 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const navigation = useNavigation();
   const [getid, setId] = useState();
 
-  //Current Date to Display Default
-  const dateNow = new Date().getDate();
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
+  //get Date Today default
   const dateToday = new Date();
   const sanDate = moment(dateToday.setMonth(dateToday.getMonth())).format(
-    "YYYYMD"
+    "YYYYMMDD"
   );
-  const san2Date = dateNow + "/" + (month + 1) + "/" + year;
 
   //useState For Setting Date
   const [date, setDate] = useState(new Date());
@@ -64,7 +60,7 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [text, setText] = useState("" + sanDate);
-  const [text2, setText2] = useState("" + san2Date);
+  const [text2, setText2] = useState("" + "Today");
 
   const months = [
     "January",
@@ -83,10 +79,8 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
   const d = new Date();
   const r = date2;
   let monthName;
-
   //get date when clicke
   let monthName2 = months[r - 1];
-
   if (monthName2 === undefined) {
     monthName = months[d.getMonth()];
   } else {
@@ -103,23 +97,19 @@ function AddExpense({ icon = "calendar-alt", iconColor = "#fff" }) {
 
     setDate2(tempDate.getMonth() + 1);
 
-    let fDate =
-      tempDate.getFullYear() +
-      "" +
-      (tempDate.getMonth() + 1) +
-      "" +
-      tempDate.getDate();
-
+    //Date for DAtabse save
+    let fDate = moment(tempDate.setMonth(tempDate.getMonth())).format(
+      "YYYYMMDD"
+    );
     setText(fDate);
 
-    let fDate2 =
-      tempDate.getDate() +
-      "/" +
-      (tempDate.getMonth() + 1) +
-      "/" +
-      tempDate.getFullYear();
+    //Date For Displya
+    let fDate2 = moment(tempDate.setMonth(tempDate.getMonth())).format(
+      "MMMM DD, YYYY"
+    );
     setText2(fDate2);
   };
+
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);

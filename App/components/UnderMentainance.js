@@ -4,14 +4,19 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
 import LottieView from "lottie-react-native";
 import AppText from "./AppText";
+import Screen from "./Screen";
 import Icon from "./Icon";
 import colors from "../config/colors";
 
-function UnderMentainance(props) {
+function UnderMentainance({
+  title = "expense category for next Month Prediction",
+}) {
+  const { height, width } = useWindowDimensions();
   const animationProgress = useRef(new Animated.Value(0));
 
   useEffect(() => {
@@ -25,30 +30,40 @@ function UnderMentainance(props) {
     ).start();
   }, []);
   return (
-    <View style={styles.container}>
-      <LottieView
-        autoPlay
-        progress={animationProgress.current}
-        source={require("../assets/Animations/astronot.json")}
-      />
-      <AppText style={styles.textDisplay}>
-        We are working on it...check back later!
+    <Screen>
+      <AppText
+        style={{
+          fontFamily: "NunitoBold",
+          fontSize: 25,
+          textAlign: "center",
+          marginVertical: 28,
+        }}
+      >
+        Please add more {title}
       </AppText>
-      <View style={{ marginTop: 50, alignItems: "center" }}>
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.navigate("AddIncomeExpense");
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <LottieView
+          autoPlay
+          progress={animationProgress.current}
+          source={require("../assets/Animations/astronot.json")}
+          style={{
+            marginTop: 0,
+            width: width - 400,
+            height: height - 400,
           }}
-        >
-          <Icon
-            size={40}
-            name="chevron-left"
-            backgroundColor="white"
-            iconColor={colors.dark}
-          />
-        </TouchableOpacity>
+          resizeMode="cover"
+        />
+        <AppText style={{ textAlign: "center" }}>
+          404: Oooh noo... there's nothing here! Just like your partner ghosted
+          you.{" "}
+        </AppText>
       </View>
-    </View>
+    </Screen>
   );
 }
 

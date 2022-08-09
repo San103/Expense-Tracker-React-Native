@@ -12,13 +12,12 @@ function Header(props) {
   return (
     <Screen
       style={{
-        maxHeight: "50%",
-        flex: 0,
         padding: 0,
+        maxHeight: 190,
         backgroundColor: "#fff",
       }}
     >
-      <View style={{ height: "100%" }}>
+      <View style={{}}>
         <View style={styles.headerTitle}>
           <AppText style={styles.titleExpense}>Expenses & Income</AppText>
           <AppText>Summary (private)</AppText>

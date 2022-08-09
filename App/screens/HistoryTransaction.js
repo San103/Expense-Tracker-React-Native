@@ -17,6 +17,7 @@ import moment from "moment";
 import { LineChart } from "react-native-chart-kit";
 import CustoModal from "../components/CustoModal";
 import { DatabaseConnection } from "../components/Database/dbConnection";
+import UnderMentainance from "../components/UnderMentainance";
 
 const db = DatabaseConnection.getConnection();
 
@@ -27,22 +28,19 @@ function HistoryTransaction(props) {
   const [getValue, setVal] = useState(null);
   const { height, width } = useWindowDimensions();
   const [getHistory, setHistory] = useState([]);
+  const [getMontlyCat, setMontlyCat] = useState([]);
 
   useEffect(() => {
     getNecessaryExpense();
+    getMontlyCategories();
   }, []);
 
   //Current Date to Display Default
   const dateToday = new Date();
   const startDate = moment(dateToday.setMonth(dateToday.getMonth() - 6)).format(
-    "YYYYMD"
+    "YYYYMMDD"
   );
-  const endDate = moment(new Date()).format("YYYYMD");
-
-  // console.log(startDate);
-  // console.log(endDate);
-  //   const nDate = dateNow + "/" + (month + 1) + "/" + year;
-
+  const endDate = moment(new Date()).format("YYYYMMDD");
   const getNecessaryExpense = () => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -57,6 +55,22 @@ function HistoryTransaction(props) {
       );
     });
   };
+
+  const getMontlyCategories = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT category,income_id,dateMonth, SUM(amountBalance) as Total FROM table_income where type=? and dateMonth=? and date >= ? and date<=? ORDER BY date DESC ",
+        ["expense", "July", startDate, endDate],
+        (tx, results) => {
+          const temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setMontlyCat(temp);
+        }
+      );
+    });
+  };
+  console.log(getMontlyCat);
   const NecessaryDisplay = () => {
     let barData = getHistory.map((item) => {
       return {
@@ -74,12 +88,9 @@ function HistoryTransaction(props) {
     const getMonth = barDataFinal.map((item) => item.name);
     const getTotal = barDataFinal.map((item) => item.total);
     const getLength = barDataFinal.map((item) => item.length);
-
     return (
       <View style={{ justifyContent: "center", alignItems: "center" }}>
-        {getLength < 2 ? (
-          <AppText>Please add more Month Expenses</AppText>
-        ) : (
+        {getLength < 2 ? null : (
           <LineChart
             data={{
               labels: getMonth,
@@ -135,6 +146,7 @@ function HistoryTransaction(props) {
   };
   const renderFlatList = () => {
     let dataFrom = NecessaryDisplay();
+    const getLength = dataFrom.map((item) => item.length);
     const renderItem = ({ item }) => {
       return (
         <TouchableOpacity
@@ -151,6 +163,7 @@ function HistoryTransaction(props) {
           }}
           onPress={() => {
             let categoryTitle = item.total;
+            console.log(categoryTitle);
             setSelectCategoryByName(categoryTitle);
           }}
         >
@@ -194,7 +207,7 @@ function HistoryTransaction(props) {
       );
     };
     return (
-      <View style={{ height: height - 80 }}>
+      <View style={{ height: height - 80, marginTop: 20 }}>
         <FlatList
           data={dataFrom}
           renderItem={renderItem}
@@ -243,7 +256,7 @@ function HistoryTransaction(props) {
               style={{
                 width: 60,
                 height: 30,
-                top: getAxis[1] + 50,
+                top: getAxis[1] + 100,
                 left: getAxis[0],
                 borderRadius: 10,
                 position: "absolute",
