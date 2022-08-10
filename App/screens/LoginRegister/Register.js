@@ -11,6 +11,7 @@ import AppTextInput from "../../components/AppTextInput";
 import Screen from "../../components/Screen";
 import ErrorMessages from "../../components/ErrorMessages";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import colors from "../../config/colors";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required().label("Username"),
@@ -41,7 +42,10 @@ function Register(props) {
   return (
     <Screen style={{ justifyContent: "center" }}>
       <View style={styles.logoCotainer}>
-        <Image style={styles.logo} source={require("../../assets/6143.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../../assets/signup.png")}
+        />
       </View>
       <Formik
         initialValues={{ username: "", password: "", repeatPassword: "" }}

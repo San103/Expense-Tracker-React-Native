@@ -104,7 +104,10 @@ function Login(props) {
   return (
     <Screen style={{ justifyContent: "center" }}>
       <View style={styles.logoCotainer}>
-        <Image style={styles.logo} source={require("../../assets/6143.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../../assets/signin2.png")}
+        />
       </View>
       <Formik
         initialValues={{ username: "", password: "" }}
