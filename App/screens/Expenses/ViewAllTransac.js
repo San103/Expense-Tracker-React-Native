@@ -13,12 +13,14 @@ import ListTransaction from "../../components/ListTransactions";
 import { DatabaseConnection } from "../../components/Database/dbConnection";
 import AppText from "../../components/AppText";
 import Icon from "../../components/Icon";
+import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 
 const db = DatabaseConnection.getConnection();
 function ViewAllTransac(props) {
   const [flatListItems, setFlatListItems] = useState([]);
   const { height, width } = useWindowDimensions();
+  const navigation = useNavigation();
 
   function handleBackButtonClick() {
     navigation.push("HomeNav");
@@ -26,8 +28,8 @@ function ViewAllTransac(props) {
   }
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
     transac();
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
     return () => {
       BackHandler.removeEventListener(
         "hardwareBackPress",
@@ -35,7 +37,17 @@ function ViewAllTransac(props) {
       );
     };
   }, []);
-
+  const transac = () => {
+    db.transaction((tx) => {
+      tx.executeSql("SELECT * FROM table_income", [], (tx, results) => {
+        var temp = [];
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+          setFlatListItems(temp);
+        }
+      });
+    });
+  };
   //get Date Today default
   const todaysDate = new Date();
   const dateToday = moment(todaysDate.setMonth(todaysDate.getMonth())).format(
@@ -44,20 +56,6 @@ function ViewAllTransac(props) {
   const yesterday = moment().subtract(1, "days");
   const dateYesterday = moment(yesterday).format("YYYYMMDD");
 
-  const transac = () => {
-    return new Promise((resolve, reject) => {
-      db.transaction((tx) => {
-        tx.executeSql("SELECT * FROM table_income", [], (tx, results) => {
-          var temp = [];
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
-            resolve(temp);
-            setFlatListItems(temp);
-          }
-        });
-      });
-    });
-  };
   return (
     <Screen>
       <View style={{ height: height - 45, marginTop: 25 }}>
@@ -70,7 +68,7 @@ function ViewAllTransac(props) {
         >
           <TouchableOpacity
             onPress={() => {
-              props.navigation.push("HomeNav");
+              navigation.push("HomeNav");
             }}
           >
             <Icon
@@ -209,7 +207,7 @@ function ViewAllTransac(props) {
                   ? "Today"
                   : item.date === dateYesterday
                   ? "Yesterday"
-                  : item.date
+                  : moment(item.date).format("MMM. DD, YYYY")
               }
               inputUserIdPassed={item.income_id}
             />

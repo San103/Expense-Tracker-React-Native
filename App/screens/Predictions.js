@@ -92,8 +92,22 @@ function Predictions(props) {
         id: item.income_id,
       };
     });
-    return dataFromSql;
+    let totalExpense = dataFromSql.reduce((a, b) => a + (b.total || 0), 0);
+
+    let finalChartNecessary = dataFromSql.map((item) => {
+      let percentage = ((item.total / totalExpense) * 100).toFixed(0);
+      return {
+        label: Number(percentage),
+        category: item.category,
+        count: item.count,
+        total: item.total,
+        color: item.color,
+        id: item.id,
+      };
+    });
+    return finalChartNecessary;
   };
+
   const getUnecessaryToDisplay = () => {
     let dataFromSql = getUnesserary.map((item) => {
       return {
@@ -104,18 +118,32 @@ function Predictions(props) {
         unid: item.income_id,
       };
     });
-    return dataFromSql;
+    let totalExpense = dataFromSql.reduce((a, b) => a + (b.untotal || 0), 0);
+
+    let finalChartNecessary = dataFromSql.map((item) => {
+      let percentage = ((item.untotal / totalExpense) * 100).toFixed(0);
+      return {
+        label: Number(percentage),
+        uncategory: item.uncategory,
+        uncount: item.uncount,
+        untotal: item.untotal,
+        color: item.color,
+        unid: item.unid,
+      };
+    });
+    return finalChartNecessary;
   };
   //handle onClick to Chart
   const setSelectCategoryByName = (name) => {
-    let categoryName = getCount.filter((a) => a.total == name);
+    let main = getNecessaryToDisplay();
+    let categoryName = main.filter((a) => a.label == name);
     setSelectedCategory(categoryName[0]);
   };
   const renderBarChartNecessary = () => {
     let catDisplay = getNecessaryToDisplay();
+    let getCategoryPecent = catDisplay.map((item) => item.label);
     let getCategoryName = catDisplay.map((item) => item.category);
     let getCategoryTotal = catDisplay.map((item) => item.total);
-
     return (
       <>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -124,20 +152,20 @@ function Predictions(props) {
               labels: getCategoryName,
               datasets: [
                 {
-                  data: getCategoryTotal,
+                  data: getCategoryPecent,
                 },
               ],
             }}
             width={Dimensions.get("window").width - 20} // from react-native
             height={250}
-            yAxisLabel="₱"
-            yAxisSuffix=""
+            yAxisLabel=""
+            yAxisSuffix="%"
             yAxisInterval={1} // optional, defaults to 1
             chartConfig={{
               backgroundColor: "#000",
               backgroundGradientFrom: "#FB6186",
               backgroundGradientTo: "#FB7C1B",
-              decimalPlaces: 2, // optional, defaults to 2dp
+              decimalPlaces: 0, // optional, defaults to 2dp
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               style: {
@@ -172,8 +200,8 @@ function Predictions(props) {
   const renderBarChartUnecessary = () => {
     let catDisplay = getUnecessaryToDisplay();
     let getCategoryName = catDisplay.map((item) => item.uncategory);
+    let getCategoryPecent = catDisplay.map((item) => item.label);
     let getCategoryTotal = catDisplay.map((item) => item.untotal);
-    let getCategoryLength = catDisplay.map((item) => item.length);
     return (
       <>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -182,20 +210,20 @@ function Predictions(props) {
               labels: getCategoryName,
               datasets: [
                 {
-                  data: getCategoryTotal,
+                  data: getCategoryPecent,
                 },
               ],
             }}
             width={Dimensions.get("window").width - 20} // from react-native
             height={250}
-            yAxisLabel="₱"
-            yAxisSuffix=""
+            yAxisLabel=""
+            yAxisSuffix="%"
             yAxisInterval={1} // optional, defaults to 1
             chartConfig={{
               backgroundColor: "#000",
               backgroundGradientFrom: "#4CA2CD",
               backgroundGradientTo: "#EE0979",
-              decimalPlaces: 2, // optional, defaults to 2dp
+              decimalPlaces: 0, // optional, defaults to 2dp
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               style: {
@@ -221,10 +249,12 @@ function Predictions(props) {
   };
   const renderBarFlatList = () => {
     let dataFrom = getNecessaryToDisplay();
+    const getSortedState = dataFrom.sort(
+      (a, b) => parseInt(b.label) - parseInt(a.label)
+    );
     let catDisplay = getNecessaryToDisplay();
     let totalExpense = catDisplay.reduce((a, b) => a + (b.total || 0), 0);
-    let totalItem = catDisplay.reduce((a, b) => a + (b.count || 0), 0);
-    let getCategoryLength = catDisplay.map((item) => item.length);
+    let getCategoryLength = getCount.length;
     const renderItem = ({ item }) => {
       return (
         <TouchableOpacity
@@ -240,7 +270,7 @@ function Predictions(props) {
                 : "#fff",
           }}
           onPress={() => {
-            let categoryTitle = item.total;
+            let categoryTitle = item.label;
             setSelectCategoryByName(categoryTitle);
           }}
         >
@@ -277,7 +307,7 @@ function Predictions(props) {
                     : "gray",
               }}
             >
-              ₱{item.total} - {item.count} item
+              ₱{item.total} - {item.label}%
             </AppText>
           </View>
         </TouchableOpacity>
@@ -290,7 +320,7 @@ function Predictions(props) {
           <UnderMentainance />
         ) : (
           <FlatList
-            data={dataFrom}
+            data={getSortedState}
             renderItem={renderItem}
             keyExtractor={(item) => `${item.id}`}
             ListHeaderComponent={
@@ -351,9 +381,9 @@ function Predictions(props) {
                       </AppText>
                     </View>
                     <View style={{ alignItems: "center" }}>
-                      <AppText>Predicted Item </AppText>
+                      <AppText>No. of Categories </AppText>
                       <AppText style={styles.amountPredicted}>
-                        {totalItem}
+                        {getCategoryLength}
                       </AppText>
                     </View>
                   </View>
@@ -370,7 +400,7 @@ function Predictions(props) {
     let dataFrom = getUnecessaryToDisplay();
     let catDisplay = getUnecessaryToDisplay();
     let totalExpense = catDisplay.reduce((a, b) => a + (b.untotal || 0), 0);
-    let totalItem = catDisplay.reduce((a, b) => a + (b.uncount || 0), 0);
+    let getCategoryLength = getUnesserary.length;
     const renderItem = ({ item }) => {
       return (
         <View
@@ -410,7 +440,7 @@ function Predictions(props) {
                     : "gray",
               }}
             >
-              ₱{item.untotal} - {item.uncount} item
+              ₱{item.untotal} - {item.label}%
             </AppText>
           </View>
         </View>
@@ -481,9 +511,9 @@ function Predictions(props) {
                     </AppText>
                   </View>
                   <View style={{ alignItems: "center" }}>
-                    <AppText>Predicted Item </AppText>
+                    <AppText>No. of Categories </AppText>
                     <AppText style={styles.amountPredicted}>
-                      {totalItem}
+                      {getCategoryLength}
                     </AppText>
                   </View>
                 </View>

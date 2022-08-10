@@ -114,7 +114,7 @@ function Register(props) {
                 height: 45,
                 marginVertical: 30,
                 justifyContent: "center",
-                backgroundColor: "green",
+                backgroundColor: "dodgerblue",
                 borderRadius: 50,
               }}
               icon="check"

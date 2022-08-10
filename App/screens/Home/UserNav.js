@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   Image,
+  BackHandler,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
@@ -83,9 +84,11 @@ function UserNav({ title, subtitle, image }) {
             <TouchableOpacity onPress={() => navigation.navigate("AboutUs")}>
               <AppText style={styles.textsAbout}>About Us</AppText>
             </TouchableOpacity>
-            <AppText style={[styles.textsAbout, { color: "red" }]}>
-              Exit
-            </AppText>
+            <TouchableOpacity onPress={() => BackHandler.exitApp()}>
+              <AppText style={[styles.textsAbout, { color: "red" }]}>
+                Exit
+              </AppText>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

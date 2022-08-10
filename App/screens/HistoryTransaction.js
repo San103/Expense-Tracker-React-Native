@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   View,
   Alert,
@@ -20,21 +20,86 @@ import { DatabaseConnection } from "../components/Database/dbConnection";
 import UnderMentainance from "../components/UnderMentainance";
 
 const db = DatabaseConnection.getConnection();
-
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "error":
+      return {
+        expenseList: [],
+      };
+    case "all":
+      return {
+        expenseList: action.payload,
+      };
+    case "January":
+      return {
+        expenseList: action.payload,
+      };
+    case "February":
+      return {
+        expenseList: action.payload,
+      };
+    case "March":
+      return {
+        expenseList: action.payload,
+      };
+    case "April":
+      return {
+        expenseList: action.payload,
+      };
+    case "May":
+      return {
+        expenseList: action.payload,
+      };
+    case "June":
+      return {
+        expenseList: action.payload,
+      };
+    case "July":
+      return {
+        expenseList: action.payload,
+      };
+    case "August":
+      return {
+        expenseList: action.payload,
+      };
+    case "September":
+      return {
+        expenseList: action.payload,
+      };
+    case "October":
+      return {
+        expenseList: action.payload,
+      };
+    case "November":
+      return {
+        expenseList: action.payload,
+      };
+    case "December":
+      return {
+        expenseList: action.payload,
+      };
+    default:
+      return console.log("No record");
+  }
+};
 function HistoryTransaction(props) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState();
+  const [state, dispatch] = useReducer(reducer, { expenseList: [] });
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [selectedCategory2, setSelectedCategory2] = useState([]);
+  const [selectedCategory3, setSelectedCategory3] = useState([]);
   const [getAxis, setAxis] = useState([null, null]);
   const [getValue, setVal] = useState(null);
   const { height, width } = useWindowDimensions();
   const [getHistory, setHistory] = useState([]);
+  const [getCat, setCat] = useState();
   const [getMontlyCat, setMontlyCat] = useState([]);
 
   useEffect(() => {
     getNecessaryExpense();
+
     getMontlyCategories();
   }, []);
-
   //Current Date to Display Default
   const dateToday = new Date();
   const startDate = moment(dateToday.setMonth(dateToday.getMonth() - 6)).format(
@@ -44,23 +109,27 @@ function HistoryTransaction(props) {
   const getNecessaryExpense = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT color,income_id,dateMonth, SUM(amountBalance) as Total FROM table_income where type=? and date >= ? and date<=? GROUP BY dateMonth ORDER BY date DESC ",
+        "SELECT color,income_id,dateMonth, category, SUM(amountBalance) as Total FROM table_income where type=? and date >= ? and date<=? GROUP BY dateMonth ORDER BY date DESC ",
         ["expense", startDate, endDate],
         (tx, results) => {
           const temp = [];
           for (let i = 0; i < results.rows.length; ++i)
             temp.push(results.rows.item(i));
+          dispatch({
+            type: "all",
+            payload: temp,
+          });
           setHistory(temp);
         }
       );
     });
   };
-
+  //console.log(getHistory);
   const getMontlyCategories = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT category,income_id,dateMonth, SUM(amountBalance) as Total FROM table_income where type=? and dateMonth=? and date >= ? and date<=? ORDER BY date DESC ",
-        ["expense", "July", startDate, endDate],
+        "SELECT category,income_id,dateMonth,SUM(amountBalance) as Total FROM table_income where type=? and date >= ? and date<=?  GROUP BY income_id  ORDER BY date DESC ",
+        ["expense", startDate, endDate],
         (tx, results) => {
           const temp = [];
           for (let i = 0; i < results.rows.length; ++i)
@@ -70,11 +139,26 @@ function HistoryTransaction(props) {
       );
     });
   };
-  console.log(getMontlyCat);
+
+  //console.log(getMontlyCat);
   const NecessaryDisplay = () => {
+    let barData = state.expenseList.map((item) => {
+      return {
+        name: item.dateMonth,
+        category: item.category,
+        total: item.Total,
+        color: item.color,
+        id: item.income_id,
+      };
+    });
+    return barData;
+  };
+
+  const chartFlatlistDefault = () => {
     let barData = getHistory.map((item) => {
       return {
         name: item.dateMonth,
+        category: item.category,
         total: item.Total,
         color: item.color,
         id: item.income_id,
@@ -85,15 +169,21 @@ function HistoryTransaction(props) {
 
   const renderChartHistory = () => {
     const barDataFinal = NecessaryDisplay();
+    const getCategories = barDataFinal.map((item) => item.category);
     const getMonth = barDataFinal.map((item) => item.name);
     const getTotal = barDataFinal.map((item) => item.total);
     const getLength = barDataFinal.map((item) => item.length);
+
     return (
       <View style={{ justifyContent: "center", alignItems: "center" }}>
-        {getLength < 2 ? null : (
+        {getLength < 2 ? (
+          <AppText style={{ fontFamily: "NunitoBold", textAlign: "center" }}>
+            No Chart to display, please add more expense for other month
+          </AppText>
+        ) : (
           <LineChart
             data={{
-              labels: getMonth,
+              labels: selectedCategory == "" ? getMonth : getCategories,
               datasets: [
                 {
                   data: getTotal,
@@ -128,8 +218,8 @@ function HistoryTransaction(props) {
               borderRadius: 16,
             }}
             onDataPointClick={({ value, getColor, x, y, index }) => {
-              let categoryName = value;
-              setSelectCategoryByName(categoryName);
+              setSelectCategoryByName2(value);
+              getValueName(value);
               setAxis([x, y]);
               setVal(value);
               return setModalVisible(true);
@@ -139,14 +229,25 @@ function HistoryTransaction(props) {
       </View>
     );
   };
-  //handle onClick to Chart
-  const setSelectCategoryByName = (name) => {
-    let categoryName = getHistory.filter((a) => a.Total == name);
-    setSelectedCategory(categoryName[0]);
+  const getValueName = (total) => {
+    let categoryTotal = selectedCategory.filter((a) => a.Total == total);
+    setSelectedCategory3(categoryTotal[0]);
   };
+  const setSelectCategoryByName2 = (name) => {
+    let categoryTotal = getHistory.filter((a) => a.Total == name);
+    setSelectedCategory2(categoryTotal[0]);
+  };
+  const setSelectCategoryByName = (name) => {
+    let categoryName = getMontlyCat.filter((a) => a.dateMonth == name);
+    let categoryTotal = getHistory.filter((a) => a.dateMonth == name);
+    dispatch({ type: name, payload: categoryName });
+    setSelectedCategory(categoryName);
+    setSelectedCategory2(categoryTotal[0]);
+    setSelectedCategory3([]);
+  };
+
   const renderFlatList = () => {
-    let dataFrom = NecessaryDisplay();
-    const getLength = dataFrom.map((item) => item.length);
+    let dataFrom = chartFlatlistDefault();
     const renderItem = ({ item }) => {
       return (
         <TouchableOpacity
@@ -157,13 +258,14 @@ function HistoryTransaction(props) {
             borderRadius: 10,
             marginHorizontal: 20,
             backgroundColor:
-              selectedCategory && selectedCategory.Total == item.total
+              (selectedCategory2 && selectedCategory2.Total == item.total) ||
+              (selectedCategory3 && selectedCategory3.dateMonth == item.name)
                 ? item.color
                 : "#fff",
           }}
           onPress={() => {
-            let categoryTitle = item.total;
-            console.log(categoryTitle);
+            let categoryTitle = item.name;
+            //console.log(categoryTitle);
             setSelectCategoryByName(categoryTitle);
           }}
         >
@@ -173,7 +275,10 @@ function HistoryTransaction(props) {
                 width: 20,
                 height: 20,
                 backgroundColor:
-                  selectedCategory && selectedCategory.Total == item.total
+                  (selectedCategory2 &&
+                    selectedCategory2.Total == item.total) ||
+                  (selectedCategory3 &&
+                    selectedCategory3.dateMonth == item.name)
                     ? "#fff"
                     : item.color,
                 borderRadius: 5,
@@ -183,7 +288,10 @@ function HistoryTransaction(props) {
               style={{
                 marginLeft: 10,
                 color:
-                  selectedCategory && selectedCategory.Total == item.total
+                  (selectedCategory2 &&
+                    selectedCategory2.Total == item.total) ||
+                  (selectedCategory3 &&
+                    selectedCategory3.dateMonth == item.name)
                     ? "#fff"
                     : "gray",
               }}
@@ -195,7 +303,10 @@ function HistoryTransaction(props) {
             <AppText
               style={{
                 color:
-                  selectedCategory && selectedCategory.Total == item.total
+                  (selectedCategory2 &&
+                    selectedCategory2.Total == item.total) ||
+                  (selectedCategory3 &&
+                    selectedCategory3.dateMonth == item.name)
                     ? "#fff"
                     : "gray",
               }}

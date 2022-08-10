@@ -62,7 +62,16 @@ function Login(props) {
     });
     check();
   }, []);
-
+  const check = () => {
+    db.transaction((tx) => {
+      tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
+        if (results.rows.length > 0) {
+          props.navigation.navigate("HomeNav");
+          //const tot = results.rows.item(0).totalBal;
+        }
+      });
+    });
+  };
   //Validate User's Input
   const getUserInformation = (uname, pass) => {
     db.transaction((tx) => {
@@ -80,16 +89,6 @@ function Login(props) {
           }
         }
       );
-    });
-  };
-  const check = () => {
-    db.transaction((tx) => {
-      tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
-        if (results.rows.length > 0) {
-          props.navigation.navigate("HomeNav");
-          //const tot = results.rows.item(0).totalBal;
-        }
-      });
     });
   };
 
@@ -151,7 +150,6 @@ function Login(props) {
                 borderRadius: 50,
                 backgroundColor: "dodgerblue",
               }}
-              icon="check"
               mode="contained"
               onPress={handleSubmit}
             >

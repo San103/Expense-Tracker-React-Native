@@ -9,7 +9,7 @@ function FormatNumber({ value2, size = 35, color = "white", styles }) {
         value={value2}
         decimalScale={2}
         displayType="text"
-        thousandSeparator
+        thousandSeparator={true}
         prefix="₱"
         renderText={(value) => (
           <Text
