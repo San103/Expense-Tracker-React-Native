@@ -72,7 +72,7 @@ const reducer = (state, action) => {
       return {
         expenseList: action.payload,
       };
-    case "Gifts":
+    case "Others":
       return {
         expenseList: action.payload,
       };
@@ -385,8 +385,8 @@ function IncomeExpenses() {
                     ? "school"
                     : item.category === "Fuel"
                     ? "gas-pump"
-                    : item.category === "Gifts"
-                    ? "gift"
+                    : item.category === "Others"
+                    ? "comment-dots"
                     : item.category === "Transportation"
                     ? "car"
                     : item.category === "Utility Bill"
@@ -408,7 +408,7 @@ function IncomeExpenses() {
                     ? "#4CA2CD"
                     : item.category === "Gadget"
                     ? "#F717FF"
-                    : item.category === "Gifts"
+                    : item.category === "Others"
                     ? "#fcb045"
                     : item.category === "School"
                     ? "#F33098"
@@ -431,7 +431,7 @@ function IncomeExpenses() {
                     ? "#9851E9"
                     : item.category === "Gadget"
                     ? "#FB6186"
-                    : item.category === "Gifts"
+                    : item.category === "Others"
                     ? "#fd1d1d"
                     : item.category === "School"
                     ? "#F63145"
@@ -454,7 +454,7 @@ function IncomeExpenses() {
                     ? "#EE0979"
                     : item.category === "Gadget"
                     ? "#FB7C1B"
-                    : item.category === "Gifts"
+                    : item.category === "Others"
                     ? "#833ab4"
                     : item.category === "School"
                     ? "#F67214"

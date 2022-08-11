@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "expense-tracker",
+    "name": "Income Expense Tracker",
     "slug": "expense-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,8 +21,9 @@
       "supportsTablet": true
     },
     "android": {
+      "package":"codingwithsan.incomeexpensetracker",
       "adaptiveIcon": {
-        "foregroundImage": "./App/assets/adaptive-icon.png",
+        "foregroundImage": "./App/assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },

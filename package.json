@@ -45,7 +45,8 @@
     "react-number-format": "^4.9.3",
     "sans": "^1.0.0",
     "victory-native": "^36.6.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-updates": "~0.13.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -128,7 +128,7 @@ function HistoryTransaction(props) {
   const getMontlyCategories = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT category,income_id,dateMonth,SUM(amountBalance) as Total FROM table_income where type=? and date >= ? and date<=?  GROUP BY income_id  ORDER BY date DESC ",
+        "SELECT category,income_id,dateMonth,SUM(amountBalance) as Total FROM table_income where type=? and date >= ? and date<=?  GROUP BY category  ORDER BY date DESC ",
         ["expense", startDate, endDate],
         (tx, results) => {
           const temp = [];

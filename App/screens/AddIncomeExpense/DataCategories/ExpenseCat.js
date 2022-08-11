@@ -33,16 +33,8 @@ const Expensecategories = [
   },
 
   {
-    label: "Gifts",
-    value: 5,
-    icon: "gift",
-    backgroundColor: "#fcb045",
-    backgroundColor1: "#fd1d1d",
-    backgroundColor2: "#833ab4",
-  },
-  {
     label: "School",
-    value: 6,
+    value: 5,
     icon: "school",
     backgroundColor: "#F33098",
     backgroundColor1: "#F63145",
@@ -50,7 +42,7 @@ const Expensecategories = [
   },
   {
     label: "Transportation",
-    value: 7,
+    value: 6,
     icon: "car",
     backgroundColor: "#CDF138",
     backgroundColor1: "#EB9A3D",
@@ -58,11 +50,19 @@ const Expensecategories = [
   },
   {
     label: "Utility Bill",
-    value: 8,
+    value: 7,
     icon: "newspaper",
     backgroundColor: "#F66031",
     backgroundColor1: "#FBBB28",
     backgroundColor2: "#B3F614",
+  },
+  {
+    label: "Others",
+    value: 8,
+    icon: "comment-dots",
+    backgroundColor: "#fcb045",
+    backgroundColor1: "#fd1d1d",
+    backgroundColor2: "#833ab4",
   },
 ];
 export default Expensecategories;
