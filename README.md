@@ -1,4 +1,4 @@
-Income and Expense Tracker with Predictions
+Income and Expense Tracker with Predictions using React-Native Framework and SQlite
 
 Application Screenshots 
 ![Sample](https://user-images.githubusercontent.com/106059541/191643446-8a7d4a90-90bf-4546-be2d-aee279adc216.jpg)
