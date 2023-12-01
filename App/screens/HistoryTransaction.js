@@ -20,6 +20,8 @@ import { DatabaseConnection } from "../components/Database/dbConnection";
 import UnderMentainance from "../components/UnderMentainance";
 
 const db = DatabaseConnection.getConnection();
+
+//React Reducer for expense List
 const reducer = (state, action) => {
   switch (action.type) {
     case "error":

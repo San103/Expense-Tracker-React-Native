@@ -24,6 +24,7 @@ import { DatabaseConnection } from "../components/Database/dbConnection";
 
 const db = DatabaseConnection.getConnection();
 
+//For github badges only hahhaha
 //Add All item for List
 const addAll = {
   label: "All",
