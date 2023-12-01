@@ -36,7 +36,7 @@ function MyExpenses(props) {
     getDateNow2();
   }, []);
 
-  //1
+  //get current date
   const getDateNow = () => {
     db.transaction((tx) => {
       tx.executeSql(
