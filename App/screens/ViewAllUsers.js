@@ -5,6 +5,7 @@ import DeleteData from "../components/Database/DeleteData";
 
 const db = DatabaseConnection.getConnection();
 
+//Display all users
 const ViewAllUser = () => {
   let [flatListItems, setFlatListItems] = useState([]);
 
