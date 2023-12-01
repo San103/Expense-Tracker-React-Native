@@ -44,10 +44,11 @@ function AboutUs(props) {
             marginTop: 20,
           }}
         >
-          Jovelyn Torres
+          Jessan Palban
         </AppText>
         <AppText>Software Developer</AppText>
         <AppText style={{ textAlign: "center" }}>
+          This Application is for educational purposes only for Thesis Project of Jovelyn Torres.
           I am a Software/Web Developer, UI/UX designer System Analyst studied
           in Bohol Island State University- Calape Campus from Tubigo Bohol.
         </AppText>
