@@ -29,13 +29,15 @@ import AboutUs from "./App/screens/Home/AboutUs";
 const Stack = createNativeStackNavigator();
 
 const db = DatabaseConnection.getConnection();
-const check = () => {
-  db.transaction((tx) => {
-    tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
-      return results.rows.length > 0;
-    });
-  });
-};
+
+//Should be commented cause its inappropriate
+// const check = () => {
+//   db.transaction((tx) => {
+//     tx.executeSql("SELECT *  FROM table_user", [], (tx, results) => {
+//       return results.rows.length > 0;
+//     });
+//   });
+// };
 // Navigate to Home Directly when user = true
 
 const StackNavigator = () => (
